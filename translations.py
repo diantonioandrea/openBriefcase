@@ -110,9 +110,9 @@ homeHelp = ["\ndetails: show details\naccounts: move to accounts environment\n" 
 accountsHelp = ["\ndetails: show details\nclose: close account\nopen: open account\n" +
 "new movements: create new movements\ncancel movements: calcel old movements\n" +
 "new informations: create new informations\ndelete informations: delete old informations", 
-"\ndettagli: mostra i dettagli del conto\nchiud: chiudi il conto\napri: apri il conto\n" +
+"\ndettagli: mostra i dettagli del conto\nchiudi: chiudi il conto\napri: apri il conto\n" +
 "nuovi movimenti: crea nuovi movimenti\nannulla movimenti: annulla vecchi movimenti\n" +
-"nove informazioni: aggiungi nuove informazioni\elimina informazioni: elimina vecchie informazioni"]
+"nuove informazioni: aggiungi nuove informazioni\elimina informazioni: elimina vecchie informazioni"]
 
 unexpectedError = ["\nUnexpected error", "\nErrore inaspettato"]
 
