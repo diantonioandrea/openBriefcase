@@ -1,0 +1,10 @@
+# folders
+
+build
+Data
+dist
+__pycache__
+
+# files
+
+*.spec
