@@ -195,6 +195,19 @@ while True: # main user interface (CLI)
                                 print(translations.exMovementCancellationUI[langIndex])
                                 break
                 
+                elif instructions[0] in translations.cmd_edit:
+                    if instructions[1] in translations.cmd_movements:
+                        print(translations.enMovementEditUI[langIndex] + translations.exCmdMessage[langIndex])
+
+                        while True:
+                            try:
+                                if not wAccount.editMovement():
+                                    break
+
+                            except(EOFError):
+                                print(translations.exMovementEditUI[langIndex])
+                                break
+                
                 elif instructions[0] in translations.cmd_delete:
                     if instructions[1] in translations.cmd_informations:
                         print(translations.enInformationDeletionUI[langIndex] + translations.exCmdMessage[langIndex])

@@ -133,12 +133,48 @@ class account:
             tbcMovementAmount = float(tbcMovement.split(" ")[-1])
             self.movements.remove(tbcMovement)
             self.balance -= tbcMovementAmount
+
             print(translations.movementCancelled[langIndex])
             return True
 
         else:
             if len(self.movements) > 0:
                 print(translations.noMovementsCancelled[langIndex])
+
+            return False
+
+    def editMovement(self):
+        tbeMovement = functions.elementFromList(self.movements) # tbe: to be edited
+
+        if tbeMovement != None:
+            oldAmount = tbeMovement.split(" ")[-1]
+            oldWeek = tbeMovement.split(": ")[0]
+
+            newReason = functions.stringInput(translations.movementReasonRequest[langIndex])
+            newAmount = round(functions.numericalInput(translations.movementAmountRequest[langIndex]), 2)
+
+            self.balance -= float(oldAmount)
+            self.balance += newAmount
+
+            if newAmount > 0:
+                newMovementString = oldWeek + ": " + newReason + ", +" + str(newAmount)
+
+            else:
+                newMovementString = oldWeek + ": " + newReason + ", " + str(newAmount)
+
+            if functions.approve(newMovementString):
+                self.movements[self.movements.index(tbeMovement)] = newMovementString
+
+                print(translations.movementEdited[langIndex])
+                return True
+            
+            else:
+                print(translations.noMovementsEdited[langIndex])
+                return False
+
+        else:
+            if len(self.movements) > 0:
+                print(translations.noMovementsEdited[langIndex])
             return False
 
     def information(self, field: str, value: str) -> None:
