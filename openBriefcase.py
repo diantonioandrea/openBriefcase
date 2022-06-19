@@ -17,7 +17,7 @@ import translations
 from translations import langIndex
 
 # startup message
-print("v0.1.0-pre") # release tag
+print("v1.0.0") # release tag
 print(translations.startupMessage[langIndex] + translations.exCmdMessage[langIndex])
 
 while True: # login
