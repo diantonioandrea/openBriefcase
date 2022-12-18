@@ -1,2 +1,3 @@
 # openBriefcase
- Accounting utility written in Python and built with CLIbrary
+
+Accounting utility written in Python and built with [CLIbrary](https://github.com/diantonioandrea/CLIbrary).
