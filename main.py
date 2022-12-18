@@ -26,19 +26,22 @@ fileHandler = {"path": dataPath + user.name + ".obc"}
 userData = CLIbrary.aLoad(fileHandler)
 
 if userData != None:
-	if user.login(userData.passwordHash):
-		user.passwordHash = userData.passwordHash
-		user.accounts = userData.accounts
+	if userData.protected:
+		if user.login(userData.passwordHash):
+			user.protected = True
+			user.accounts = userData.accounts
 
+			print("\nWelcome back, " + user.name + "\n")
+
+		else:
+			print(Back.RED + Fore.WHITE + "LOGIN ERROR" + Style.RESET_ALL)
+			sys.exit(-1)
+	
+	else:
+		user.accounts = userData.accounts
 		print("\nWelcome back, " + user.name + "\n")
 
-	else:
-		print(Back.RED + Fore.WHITE + "LOGIN ERROR" + Style.RESET_ALL)
-		sys.exit(-1)
-
 else:
-	user.register()
-
 	print("\nWelcome, " + user.name + "\n")
 
 # Interface
@@ -65,7 +68,7 @@ while True:
 	cmdHandler["allowedCommands"] = ["new", "summary", "edit", "remove"]
 
 	if current == None:
-		cmdHandler["allowedCommands"] += ["select"]
+		cmdHandler["allowedCommands"] += ["password", "select"]
 
 	command = CLIbrary.cmdIn(cmdHandler)
 
@@ -77,6 +80,12 @@ while True:
 	if current == None:
 		if cmd == "exit":
 			break
+
+		if cmd == "password":
+			user.register()
+
+			print(cmdHandler["verboseStyle"] + "PASSWORD SET" + Style.RESET_ALL)
+			continue
 
 		if cmd == "new":
 			newAccount = openBriefcase.account([account.name for account in accounts])

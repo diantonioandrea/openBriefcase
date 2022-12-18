@@ -41,6 +41,8 @@ def moneyPrint(amount: float) -> str:
 class user:
 	def __init__(self):
 		self.name = CLIbrary.strIn({"request": "User", "noSpace": True})
+
+		self.protected = False
 		self.passwordHash = ""
 
 		self.accounts = []
@@ -52,8 +54,8 @@ class user:
 		return bcrypt.checkpw(password.encode(), passwordHash)
 
 	def register(self):
-		password = CLIbrary.strIn({"request": "Password", "noSpace": True, "verification": True, "fixedLength": 8})
-		self.passwordHash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+		self.passwordHash = bcrypt.hashpw(CLIbrary.strIn({"request": "Password", "noSpace": True, "verification": True, "fixedLength": 8}).encode(), bcrypt.gensalt())
+		self.protected = True
 
 class account:
 	def __init__(self, otherNames: list):
