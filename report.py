@@ -33,10 +33,10 @@ def monthName(monthNumber: str) -> str:
 
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
-		return "\\color{solarized-green}" + str(amount) + "€ \\color{solarized-base02}"
+		return "\\color{solarized-green} " + str(amount) + "€ \\color{solarized-base02}"
 
 	else:
-		return "\\color{solarized-red}" + str(amount) + "€ \\color{solarized-base02}"
+		return "\\color{solarized-red} " + str(amount) + "€ \\color{solarized-base02}"
 
 def report(user, sdOpts: dict) -> None:
 	accounts = user.accounts
@@ -62,9 +62,6 @@ def report(user, sdOpts: dict) -> None:
 		end = sdOpts["e"]
 
 	for account in accounts:
-		accountString = "\\chapter*{Movements for: " + account.name + "}\n"
-		accountString += "\\thispagestyle{fancy}\n"
-
 		counter = 0
 
 		movements = account.movements
@@ -75,11 +72,17 @@ def report(user, sdOpts: dict) -> None:
 		if end != "":
 			movements = [movement for movement in movements if movement.date <= end]
 
+		accountString = "\\chapter*{Movements for: " + account.name.upper()
+
 		if start == end == "":
-			accountString += "Account balance: " + moneyPrint(account.balance)
+			accountString += ", balance: " + str(account.balance)
 		
 		else:
-			accountString += "Account movements: " + moneyPrint(sum([movement.amount for movement in movements]))
+			accountString += ", movements: " + str(sum([movement.amount for movement in movements]))
+
+		accountString += "€}\n"
+
+		accountString += "\\thispagestyle{fancy}\n"
 
 		years = set([movement.date.split("-")[0] for movement in movements])
 		years = list(years)
@@ -102,19 +105,9 @@ def report(user, sdOpts: dict) -> None:
 				accountString += "\n\n\\subsection*{" + monthName(month) + ", " + str(len(monthMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in monthMovements])) + "}"
 
 				for movement in monthMovements:
-					if start != "":
-						if movement.date < start:
-							continue
-					
-					if end != "":
-						if movement.date > end:
-							continue
-
 					counter += 1
 
-					accountString += "\n\n\\subsubsection*{" + movement.reason + "}"
-					accountString += "\nAmount: " + moneyPrint(movement.amount) + " \\newline"
-					accountString += "\nDate: " + movement.date
+					accountString += "\n\n\\textbf{" + movement.reason.upper() + "}" + " $\\cdot$ " + "\n" + monthName(month) + " " + movement.date.split("-")[0] + ", " + year + " $\\cdot$ " + moneyPrint(movement.amount)
 
 			accountString += "\n\n\\end{multicols*}"
 		

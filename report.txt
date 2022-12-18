@@ -1,4 +1,4 @@
-\documentclass{book}
+\documentclass{report}
 
 \usepackage{xcolor}
 \usepackage{xcolor-solarized}
@@ -9,7 +9,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
 \usepackage[a4paper]{geometry}
-\usepackage[Glenn]{fncychap}
+\usepackage[Bjarne]{fncychap}
 
 \setlength{\columnsep}{8mm}
 \setlength{\columnseprule}{1pt}
