@@ -1,4 +1,4 @@
-import CLIbrary, openBriefcase, os, sys
+import CLIbrary, openBriefcase, report, os, sys
 from colorama import init, Fore, Back, Style
 
 dataPath = str(os.getcwd()) + "/data/"
@@ -68,7 +68,7 @@ while True:
 	cmdHandler["allowedCommands"] = ["new", "summary", "edit", "remove"]
 
 	if current == None:
-		cmdHandler["allowedCommands"] += ["password", "select"]
+		cmdHandler["allowedCommands"] += ["password", "select", "report"]
 
 	command = CLIbrary.cmdIn(cmdHandler)
 
@@ -149,6 +149,13 @@ while True:
 			except:
 				print(Back.RED + Fore.WHITE + "ACCOUNT NOT FOUND" + Style.RESET_ALL)
 				continue
+
+		if cmd == "report":
+			if len(accounts) == 0:
+				print(Back.RED + Fore.WHITE + "NOTHING TO DO HERE" + Style.RESET_ALL)
+
+			report.report(user, sdOpts)
+			continue
 	
 	else:
 		if cmd == "exit":

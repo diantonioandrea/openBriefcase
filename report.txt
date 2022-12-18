@@ -1,0 +1,50 @@
+\documentclass{book}
+
+\usepackage{xcolor}
+\usepackage{xcolor-solarized}
+\usepackage{pagecolor}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage[a4paper]{geometry}
+\usepackage[Glenn]{fncychap}
+
+\setlength{\columnsep}{8mm}
+\setlength{\columnseprule}{1pt}
+\def\columnseprulecolor{\color{solarized-base02}}
+
+\geometry{
+    inner=16mm,
+    outer=16mm,
+    top=32mm,
+    bottom=32mm,
+    heightrounded,
+    marginparwidth=50pt,
+    marginparsep=20pt,
+    headsep=25pt,
+    headheight=30pt
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=solarized-cyan,
+    urlcolor=solarized-orange,
+    pdfpagemode=FullScreen,
+}
+
+\pagecolor{solarized-base3}
+\color{solarized-base02}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{DATE}
+\fancyhead[R]{Page \thepage}
+\fancyfoot[C]{USER's openBriefcase report \\ openBriefcase's been brought to you by Andrea Di Antonio $\cdot$ See more of my projects on \href{https://diantonioandrea.com}{diantonioandrea.com}}
+
+\begin{document}
+
+REPORTCONTENT
+
+\end{document}
