@@ -53,7 +53,7 @@ while True:
 	[account.update() for account in accounts]
 	user.accounts.sort(key = lambda entry: entry.balance, reverse=True)
 
-	fileHandler["data"] = user
+	fileHandler["data"] = user # type: ignore
 	CLIbrary.aDump(fileHandler)
 
 	cmdString = user.name + "@openBriefcase"

@@ -29,6 +29,8 @@ def monthName(monthNumber: str) -> str:
 	if monthNumber == "12":
 		return "December"
 
+	return ""
+
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
 		return Fore.GREEN + str(amount) + "€" + Style.RESET_ALL
