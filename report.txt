@@ -8,11 +8,10 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
-\usepackage[a4paper]{geometry}
+\usepackage[a3paper]{geometry}
 \usepackage[Bjarne]{fncychap}
 
 \setlength{\columnsep}{8mm}
-\setlength{\columnseprule}{1pt}
 \def\columnseprulecolor{\color{solarized-base02}}
 
 \geometry{

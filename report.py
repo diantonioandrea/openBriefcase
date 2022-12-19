@@ -72,17 +72,23 @@ def report(user, sdOpts: dict) -> None:
 		if end != "":
 			movements = [movement for movement in movements if movement.date <= end]
 
-		accountString = "\\chapter*{Movements for: " + account.name.upper()
+		accountString = "\\chapter*{Movements for: " + account.name.upper() + "}\n"
+		accountString += "\\thispagestyle{fancy}\n\n"
+
+		accountString += "\\begin{center}\n\n"
+
+		accountString += "\\Large{Account name: " + account.name + " \\\\ "
+		accountString += "Account "
 
 		if start == end == "":
-			accountString += ", balance: " + str(account.balance)
+			accountString += "balance: " + moneyPrint(account.balance)
 		
 		else:
-			accountString += ", movements: " + str(sum([movement.amount for movement in movements]))
+			accountString += "movements during the specified period: " + moneyPrint(sum([movement.amount for movement in movements]))
 
-		accountString += "€}\n"
+		accountString += "}\n\n"
 
-		accountString += "\\thispagestyle{fancy}\n"
+		accountString += "\\end{center}\n\n"
 
 		years = set([movement.date.split("-")[0] for movement in movements])
 		years = list(years)
@@ -96,7 +102,7 @@ def report(user, sdOpts: dict) -> None:
 			months.sort()
 
 			accountString += "\n\n\\section*{" + year + ", " + str(len(yearMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in yearMovements])) + "}\n"
-			accountString += "\\begin{multicols*}{2}"
+			accountString += "\\begin{multicols*}{3}"
 
 			for month in months:
 				monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
@@ -107,7 +113,7 @@ def report(user, sdOpts: dict) -> None:
 				for movement in monthMovements:
 					counter += 1
 
-					accountString += "\n\n\\textbf{" + movement.reason.upper() + "}" + " $\\cdot$ " + "\n" + monthName(month) + " " + movement.date.split("-")[0] + ", " + year + " $\\cdot$ " + moneyPrint(movement.amount)
+					accountString += "\n\n\\textbf{" + movement.reason.upper() + "}" + " $\\cdot$ " + "\n" + monthName(month) + " " + movement.date.split("-")[2] + ", " + year + " $\\cdot$ " + moneyPrint(movement.amount)
 
 			accountString += "\n\n\\end{multicols*}"
 		
