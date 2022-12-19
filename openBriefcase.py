@@ -33,10 +33,10 @@ def monthName(monthNumber: str) -> str:
 
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
-		return Fore.GREEN + str(amount) + "€" + Style.RESET_ALL
+		return Fore.GREEN + str(round(amount, 2)) + "€" + Style.RESET_ALL
 
 	else:
-		return Fore.RED + str(amount) + "€" + Style.RESET_ALL
+		return Fore.RED + str(round(amount, 2)) + "€" + Style.RESET_ALL
 
 # Classes
 
@@ -62,7 +62,7 @@ class user:
 class account:
 	def __init__(self, otherNames: list):
 		self.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": otherNames})
-		self.start = CLIbrary.numIn({"request": "Starting balance"})
+		self.start = CLIbrary.numIn({"request": "Starting balance", "round": 2})
 
 		self.balance = self.start
 		self.movements = []
@@ -121,7 +121,7 @@ class account:
 class movement:
 	def __init__(self, otherCodes: list):
 		self.reason = CLIbrary.strIn({"request": "Movement reason"})
-		self.amount = CLIbrary.numIn({"request": "Movement amount"})
+		self.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})
 		self.date = CLIbrary.dateIn({"request": "Movement date"})
 
 		while True:

@@ -186,7 +186,7 @@ while True:
 					toBeEdited.reason = CLIbrary.strIn({"request": "Movement reason"})
 				
 				if "amount" in ddOpts:
-					toBeEdited.amount = CLIbrary.numIn({"request": "Movement amount"})
+					toBeEdited.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})
 				
 				if "date" in ddOpts:
 					toBeEdited.date = CLIbrary.dateIn({"request": "Movement date"})
