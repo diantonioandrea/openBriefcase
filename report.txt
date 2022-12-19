@@ -36,11 +36,16 @@
 \pagecolor{solarized-base3}
 \color{solarized-base02}
 
+\makeatletter
+\renewcommand{\@chapapp}{Account}
+\makeatother
+
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{DATE}
+\fancyhead[C]{USER $\cdot$ \href{https://github.com/diantonioandrea/openBriefcase}{openBriefcase}}
 \fancyhead[R]{Page \thepage}
-\fancyfoot[C]{USER's openBriefcase report \\ openBriefcase's been brought to you by Andrea Di Antonio $\cdot$ See more of my projects on \href{https://diantonioandrea.com}{diantonioandrea.com}}
+\fancyfoot[C]{USER's report $\cdot$ TIMERANGE \\ openBriefcase's been brought to you by Andrea Di Antonio $\cdot$ See more of my projects on \href{https://diantonioandrea.com}{diantonioandrea.com}}
 
 \begin{document}
 

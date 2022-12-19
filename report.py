@@ -72,7 +72,7 @@ def report(user, sdOpts: dict) -> None:
 		if end != "":
 			movements = [movement for movement in movements if movement.date <= end]
 
-		accountString = "\\chapter*{Movements for: " + account.name.upper() + "}\n"
+		accountString = "\\chapter{" + account.name.upper() + "}\n"
 		accountString += "\\thispagestyle{fancy}\n\n"
 
 		accountString += "\\begin{center}\n\n"
@@ -126,21 +126,20 @@ def report(user, sdOpts: dict) -> None:
 
 	timeRange = ""
 
-	if start != "":
-		timeRange += " $\\cdot$ From " + start
-	
-	if end != "":
-		if timeRange != "":
-			timeRange += " to " + end
+	if start == "":
+		start = min([min([movement.date for movement in account.movements]) for account in accounts])
 
-		else:
-			timeRange += " $\\cdot$ Until " + end
+	if end == "":
+		end = max([max([movement.date for movement in account.movements]) for account in accounts])
+
+	timeRange += "From " + start + " to " + end
 
 	reportTime = time.strftime("%Y-%m-%dT%H:%M")
 	reportFilePath = reportPath + "report_" + reportTime + ".tex"
 
 	reportText = template.replace("REPORTCONTENT", "\n\n".join(accountReports))
-	reportText = reportText.replace("DATE", time.strftime("%Y-%m-%dT%H:%M") + timeRange)
+	reportText = reportText.replace("DATE", "Compiled on " + time.strftime("%A, %B %d, %Y"))
+	reportText = reportText.replace("TIMERANGE", timeRange)
 	reportText = reportText.replace("USER", user.name)
 
 	reportFile = open(reportFilePath, "w")
