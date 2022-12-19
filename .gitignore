@@ -3,6 +3,13 @@
 data
 report
 
+# MAKE OPENBRIEFCASE
+
+build
+dist
+*.spec
+openBriefcase
+
 # OTHERS
 
 .vscode
