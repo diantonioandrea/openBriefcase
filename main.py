@@ -151,8 +151,9 @@ while True:
 				continue
 
 		if cmd == "report":
-			if len(accounts) == 0:
+			if len(accounts) == 0 or max([len(account.movements) for account in accounts]) == 0:
 				print(Back.RED + Fore.WHITE + "NOTHING TO DO HERE" + Style.RESET_ALL)
+				continue
 
 			report.report(user, sdOpts)
 			continue
