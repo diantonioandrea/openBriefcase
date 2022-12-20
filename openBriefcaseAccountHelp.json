@@ -1,0 +1,19 @@
+{
+	"exit": {
+		"description": "Exits the account environment."
+	},
+	"new": {
+		"description": "Creates a new movement."
+	},
+	"edit": {
+		"description": "Edits a movement's features.",
+		"mandatoryOptions": "-c MOVEMENT_CODE, [--reason --amount --date]"
+	},
+	"remove": {
+		"description": "Removes a movement.",
+		"mandatoryOptions": "-c MOVEMENT_CODE"
+	},
+	"summary": {
+		"description": "Prints a summary of the account's movements."
+	}
+}

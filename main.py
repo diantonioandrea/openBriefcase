@@ -2,7 +2,8 @@ import CLIbrary, openBriefcase, report, os, sys
 from colorama import init, Fore, Back, Style
 
 dataPath = str(os.getcwd()) + "/data/"
-# helpPath = str(os.getcwd()) + "/openBriefcaseHelp.json"
+helpPath = str(os.getcwd()) + "/openBriefcaseHelp.json"
+accountHelpPath = str(os.getcwd()) + "/openBriefcaseAccountHelp.json"
 
 try: # Check the existence or create the data folder.
 	if not os.path.exists(dataPath):
@@ -16,13 +17,14 @@ init()
 
 print("openBriefcase")
 print("Accounting utility written in Python and built with CLIbrary")
-print("Developed by Andrea Di Antonio, more on https://github.com/diantonioandrea/openBriefcase\n")
+print("Developed by Andrea Di Antonio, more on https://github.com/diantonioandrea/openBriefcase")
+print("Type \'help\' if needed\n")
 
 # Login or register
 
 user = openBriefcase.user()
 
-fileHandler = {"path": dataPath + user.name + ".obc"}
+fileHandler = {"path": dataPath + user.name + ".obc", "ignoreMissing": True}
 userData = CLIbrary.aLoad(fileHandler)
 
 if userData != None:
@@ -65,6 +67,12 @@ while True:
 	cmdHandler["style"] = Fore.GREEN
 	cmdHandler["verboseStyle"] = Back.YELLOW
 
+	if current == None:
+		cmdHandler["helpPath"] = helpPath
+	
+	else:
+		cmdHandler["helpPath"] = accountHelpPath
+
 	cmdHandler["allowedCommands"] = ["new", "summary", "edit", "remove"]
 
 	if current == None:
@@ -76,6 +84,10 @@ while True:
 	sdOpts = command["sdOpts"]
 	ddOpts = command["ddOpts"]
 	output = command["output"]
+
+	if cmd == "help":
+		print(output)
+		continue
 
 	if current == None:
 		if cmd == "exit":
