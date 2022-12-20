@@ -117,7 +117,7 @@ class account:
 
 			for month in months:
 				monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
-				monthMovements.sort(key = lambda entry: entry.reason)
+				monthMovements.sort(key = lambda entry: entry.date)
 
 				counter = 0
 				print("\n\t" + monthName(month) + ", " + str(len(monthMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in monthMovements])) + "\n")
