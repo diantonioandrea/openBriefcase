@@ -69,9 +69,10 @@ while True:
 	fileHandler["data"] = user # type: ignore
 	CLIbrary.aDump(fileHandler)
 
-	cmdString = user.name + "@openBriefcase"
+	cmdString = "[" + user.name + "@openBriefcase"
 	if current != None:
 		cmdString += ">" + current.name
+	cmdString += "]"
 
 	cmdHandler = {}
 	cmdHandler["request"] = cmdString
