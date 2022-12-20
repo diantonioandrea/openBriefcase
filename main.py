@@ -18,32 +18,44 @@ init()
 print("openBriefcase")
 print("Accounting utility written in Python and built with CLIbrary")
 print("Developed by Andrea Di Antonio, more on https://github.com/diantonioandrea/openBriefcase")
-print("Type \'help\' if needed\n")
+print("Type \'help\' if needed")
 
 # Login or register
 
-user = openBriefcase.user()
+while True:
+	user = openBriefcase.user()
 
-fileHandler = {"path": dataPath + user.name + ".obc", "ignoreMissing": True}
-userData = CLIbrary.aLoad(fileHandler)
+	fileHandler = {"path": dataPath + user.name + ".obc", "ignoreMissing": True}
+	userData = CLIbrary.aLoad(fileHandler)
 
-if userData != None:
-	if userData.protected:
-		if user.login(userData.passwordHash):
-			user.protected = True
+	if userData != None:
+		if userData.protected:
+			if user.login(userData.passwordHash):
+				user.protected = True
 
-		else:
-			print(Back.RED + Fore.WHITE + "LOGIN ERROR" + Style.RESET_ALL)
-			sys.exit(-1)
-	
-	user.accounts = userData.accounts
-	user.registrationDate = userData.registrationDate
+			else:
+				print(Back.RED + Fore.WHITE + "LOGIN ERROR" + Style.RESET_ALL)
+				
+				if CLIbrary.boolIn({"request": "Exit"}):
+					sys.exit(-1)
+				else:
+					continue
+		
+		user.accounts = userData.accounts
+		user.registrationDate = userData.registrationDate
 
-	print("\nWelcome back, " + str(user))
-	print("Last login: " + time.strftime("%A, %B %d, %Y at %H:%M", userData.lastLogin) + "\n")
+		print("\nWelcome back, " + str(user))
+		print("Last login: " + time.strftime("%A, %B %d, %Y at %H:%M", userData.lastLogin) + "\n")
+		break
 
-else:
-	print("\nWelcome, " + str(user) + "\n")
+	else:
+		if not CLIbrary.boolIn({"request": "User \"" + user.name + "\" does not exist. Would you like to create it?"}):
+			if CLIbrary.boolIn({"request": "Exit"}):
+				sys.exit(-1)
+			continue
+
+		print("\nWelcome, " + str(user) + "\n")
+		break
 
 # Interface
 
@@ -191,10 +203,6 @@ while True:
 			continue
 
 		if cmd == "summary":
-			if len(current.movements) == 0:
-				print(Back.RED + Fore.WHITE + "NOTHING TO SEE HERE" + Style.RESET_ALL)
-				continue
-
 			current.summary()
 			continue
 

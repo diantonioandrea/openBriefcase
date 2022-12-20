@@ -1,5 +1,5 @@
 import CLIbrary, bcrypt, random, time
-from colorama import Fore, Style
+from colorama import Fore, Back, Style
 
 # Utilities
 
@@ -42,7 +42,7 @@ def moneyPrint(amount: float) -> str:
 
 class user:
 	def __init__(self):
-		self.name = CLIbrary.strIn({"request": "User", "noSpace": True})
+		self.name = CLIbrary.strIn({"request": "\nUser", "noSpace": True})
 
 		self.registrationDate = time.localtime()
 		self.lastLogin = time.localtime()
@@ -68,7 +68,7 @@ class user:
 class account:
 	def __init__(self, otherNames: list):
 		self.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": otherNames})
-		self.start = CLIbrary.numIn({"request": "Starting balance", "round": 2})
+		self.start = CLIbrary.numIn({"request": "Starting balance"})
 
 		self.creationDate = time.localtime()
 		self.lastModified = time.localtime()
@@ -99,9 +99,13 @@ class account:
 
 	def summary(self):
 		print("Summary for " + str(self))
-		print("Opened with " + moneyPrint(self.start) + "\n")
+		print("Opened with " + moneyPrint(self.start))
 
-		print("\nFormat: DATE, REASON: AMOUNT #CODE\n")
+		if len(self.movements) == 0:
+			print(Back.RED + "NO MOVEMENTS" + Style.RESET_ALL)
+			return None
+
+		print("\nFormat: DATE, REASON: AMOUNT #CODE")
 
 		years = set([movement.date.split("-")[0] for movement in self.movements])
 		years = list(years)
@@ -114,7 +118,7 @@ class account:
 			months = list(months)
 			months.sort()
 
-			print(year + ", " + str(len(yearMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in yearMovements])))
+			print("\n" + year + ", " + str(len(yearMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in yearMovements])))
 
 			for month in months:
 				monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
@@ -130,7 +134,7 @@ class account:
 class movement:
 	def __init__(self, otherCodes: list):
 		self.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
-		self.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})
+		self.amount = CLIbrary.numIn({"request": "Movement amount"})
 		self.date = CLIbrary.dateIn({"request": "Movement date"})
 
 		self.creationDate = time.localtime()
