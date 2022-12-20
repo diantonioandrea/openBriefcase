@@ -184,7 +184,7 @@ while True:
 				toBeEdited = [movement for movement in current.movements if movement.code == sdOpts["c"]].pop()
 
 				if "reason" in ddOpts:
-					toBeEdited.reason = CLIbrary.strIn({"request": "Movement reason"})
+					toBeEdited.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
 				
 				if "amount" in ddOpts:
 					toBeEdited.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})

@@ -120,7 +120,7 @@ class account:
 			
 class movement:
 	def __init__(self, otherCodes: list):
-		self.reason = CLIbrary.strIn({"request": "Movement reason"})
+		self.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
 		self.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})
 		self.date = CLIbrary.dateIn({"request": "Movement date"})
 
