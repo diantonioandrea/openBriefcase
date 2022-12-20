@@ -1,4 +1,4 @@
-openBriefcase:
+compile:
 	pyinstaller --onefile --console main.py
 	mv dist/main ./openBriefcase
 

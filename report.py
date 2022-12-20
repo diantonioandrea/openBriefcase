@@ -78,6 +78,7 @@ def report(user, sdOpts: dict) -> None:
 		accountString += "\\begin{center}\n\n"
 
 		accountString += "\\Large{Account name: " + account.name + " \\\\ "
+		accountString += "\\Large{Opened with: " + moneyPrint(account.start) + " \\\\ "
 		accountString += "Account "
 
 		if start == end == "":
@@ -102,7 +103,7 @@ def report(user, sdOpts: dict) -> None:
 			months.sort()
 
 			accountString += "\n\n\\section*{" + year + ", " + str(len(yearMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in yearMovements])) + "}\n"
-			accountString += "\\begin{multicols*}{3}"
+			accountString += "\\begin{multicols*}{2}"
 
 			for month in months:
 				monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
@@ -113,7 +114,7 @@ def report(user, sdOpts: dict) -> None:
 				for movement in monthMovements:
 					counter += 1
 
-					accountString += "\n\n\\textbf{" + movement.reason.upper() + "}" + " $\\cdot$ " + "\n" + monthName(month) + " " + movement.date.split("-")[2] + ", " + year + " $\\cdot$ " + moneyPrint(movement.amount)
+					accountString += "\n\n \\noindent \\textbf{" + movement.reason.upper() + "}" + " $\\cdot$ " + "\n" + monthName(month) + " " + movement.date.split("-")[2] + ", " + year + " $\\cdot$ " + moneyPrint(movement.amount)
 
 			accountString += "\n\n\\end{multicols*}"
 		
