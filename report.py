@@ -115,9 +115,9 @@ def report(user, sdOpts: dict) -> None:
 		
 		# Movements
 
-		accountString += "\n\n\\chapter*{" + account.name.upper() + " Movements}"
-		accountString += "\n\\thispagestyle{fancy}"
-
+		if len(account.movements) > 0:
+			accountString += "\n\n\\chapter*{" + account.name.upper() + " Movements}"
+			accountString += "\n\\thispagestyle{fancy}"
 
 		for year in years:
 			yearMovements = [movement for movement in movements if year in movement.date]
@@ -170,10 +170,10 @@ def report(user, sdOpts: dict) -> None:
 	timeRange = ""
 
 	if start == "":
-		start = min([min([movement.date for movement in account.movements]) for account in accounts])
+		start = min([min([movement.date for movement in account.movements]) if len(account.movements) else "N/A" for account in accounts])
 
 	if end == "":
-		end = max([max([movement.date for movement in account.movements]) for account in accounts])
+		end = max([max([movement.date for movement in account.movements]) if len(account.movements) else "" for account in accounts])
 
 	timeRange += "From " + start + " to " + end
 

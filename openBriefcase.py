@@ -78,15 +78,10 @@ class account:
 
 	def __str__(self):
 		self.update()
-
 		return self.name + ": " + moneyPrint(self.balance)
 
 	def update(self):
-		self.balance = self.start
-
-		for movement in self.movements:
-			self.balance += movement.amount
-
+		self.balance = self.start + sum([movement.amount for movement in self.movements])
 		self.movements.sort(key = lambda entry: entry.date)
 
 	def addMovement(self):
