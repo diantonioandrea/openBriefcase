@@ -1,5 +1,4 @@
 from pdflatex import PDFLaTeX
-from datetime import datetime
 from colorama import Fore, Back, Style
 import os, sys, time
 

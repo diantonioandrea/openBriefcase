@@ -1,4 +1,4 @@
-import CLIbrary, openBriefcase, report, os, sys
+import CLIbrary, openBriefcase, report, os, sys, time
 from colorama import init, Fore, Back, Style
 
 dataPath = str(os.getcwd()) + "/data/"
@@ -31,17 +31,16 @@ if userData != None:
 	if userData.protected:
 		if user.login(userData.passwordHash):
 			user.protected = True
-			user.accounts = userData.accounts
-
-			print("\nWelcome back, " + user.name + "\n")
 
 		else:
 			print(Back.RED + Fore.WHITE + "LOGIN ERROR" + Style.RESET_ALL)
 			sys.exit(-1)
 	
-	else:
-		user.accounts = userData.accounts
-		print("\nWelcome back, " + user.name + "\n")
+	user.accounts = userData.accounts
+	user.registrationDate = userData.registrationDate
+
+	print("\nWelcome back, " + user.name)
+	print("Last login: " + time.strftime("%A, %B %d, %Y at %H:%M", userData.lastLogin) + "\n")
 
 else:
 	print("\nWelcome, " + user.name + "\n")
@@ -94,8 +93,18 @@ while True:
 			break
 
 		if cmd == "password":
-			user.register()
+			if user.protected:
+				if user.login(user.passwordHash):
+					print(cmdHandler["verboseStyle"] + "PASSWORD DISABLED" + Style.RESET_ALL)
+					user.protected = False
+					user.passwordHash = ""
+					continue
+					
+				else:
+					print(Back.RED + Fore.WHITE + "WRONG PASSWORD" + Style.RESET_ALL)
+					continue
 
+			user.register()
 			print(cmdHandler["verboseStyle"] + "PASSWORD SET" + Style.RESET_ALL)
 			continue
 
@@ -138,7 +147,9 @@ while True:
 				continue
 
 			try:
-				[account for account in accounts if account.name == sdOpts["n"]].pop().name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": [account.name for account in accounts]})
+				editedAccount = [account for account in accounts if account.name == sdOpts["n"]].pop()
+				editedAccount.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": [account.name for account in accounts]})
+				editedAccount.lastModified = time.localtime()
 
 				print(cmdHandler["verboseStyle"] + "ACCOUNT NAME EDITED" + Style.RESET_ALL)
 				continue
@@ -193,16 +204,18 @@ while True:
 				continue
 
 			try:
-				toBeEdited = [movement for movement in current.movements if movement.code == sdOpts["c"]].pop()
+				editedMovement = [movement for movement in current.movements if movement.code == sdOpts["c"]].pop()
 
 				if "reason" in ddOpts:
-					toBeEdited.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
+					editedMovement.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
 				
 				if "amount" in ddOpts:
-					toBeEdited.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})
+					editedMovement.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})
 				
 				if "date" in ddOpts:
-					toBeEdited.date = CLIbrary.dateIn({"request": "Movement date"})
+					editedMovement.date = CLIbrary.dateIn({"request": "Movement date"})
+
+				editedMovement.lastModified = time.localtime()
 
 				print(cmdHandler["verboseStyle"] + "MOVEMENT EDITED" + Style.RESET_ALL)
 				continue

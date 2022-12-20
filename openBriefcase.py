@@ -1,4 +1,4 @@
-import CLIbrary, bcrypt, random
+import CLIbrary, bcrypt, random, time
 from colorama import Fore, Style
 
 # Utilities
@@ -44,6 +44,9 @@ class user:
 	def __init__(self):
 		self.name = CLIbrary.strIn({"request": "User", "noSpace": True})
 
+		self.registrationDate = time.localtime()
+		self.lastLogin = time.localtime()
+
 		self.protected = False
 		self.passwordHash = ""
 
@@ -63,6 +66,9 @@ class account:
 	def __init__(self, otherNames: list):
 		self.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": otherNames})
 		self.start = CLIbrary.numIn({"request": "Starting balance", "round": 2})
+
+		self.creationDate = time.localtime()
+		self.lastModified = time.localtime()
 
 		self.balance = self.start
 		self.movements = []
@@ -123,6 +129,9 @@ class movement:
 		self.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
 		self.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})
 		self.date = CLIbrary.dateIn({"request": "Movement date"})
+
+		self.creationDate = time.localtime()
+		self.lastModified = time.localtime()
 
 		while True:
 			self.code = str(random.randint(10**6, 10**7-1))

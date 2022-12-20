@@ -3,7 +3,7 @@
 		"description": "Exits the program."
 	}, 
 	"password": {
-		"description": "Lets the user pick a password to protect its account."
+		"description": "Lets the user pick a password to protect its account or disable it."
 	},
 	"select": {
 		"description": "Enters the specified account environment.",
