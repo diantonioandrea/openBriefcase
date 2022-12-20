@@ -71,7 +71,7 @@ def report(user, sdOpts: dict) -> None:
 		if end != "":
 			movements = [movement for movement in movements if movement.date <= end]
 
-		accountString = "\\chapter{" + account.name.upper() + " Summary}"
+		accountString = "\\part{" + account.name[0].upper() + account.name[1:] + ": Summary}"
 		accountString += "\n\\thispagestyle{fancy}\n\n"
 
 		# Summary
@@ -103,6 +103,12 @@ def report(user, sdOpts: dict) -> None:
 			accountString += "\n\n\\subsection*{" + year + "}"
 			accountString += "\n\n" + str(len(yearMovements)) + " movement(s) for a total of " + moneyPrint(sum([movement.amount for movement in yearMovements]))
 
+			income = sum([movement.amount for movement in yearMovements if movement.amount > 0])
+			expense = sum([movement.amount for movement in yearMovements if movement.amount < 0])
+
+			accountString += " \\newline\nIncome: " + moneyPrint(income) if income != 0 else ""
+			accountString += " \\newline\nExpense: " + moneyPrint(expense) if expense != 0 else ""
+
 			accountString += "\n\n\\begin{description}"
 
 			for month in months:
@@ -110,13 +116,19 @@ def report(user, sdOpts: dict) -> None:
 				monthMovements.sort(key = lambda entry: entry.date)
 
 				accountString += "\n\t\\item[" + monthName(month) + "] " + str(len(monthMovements)) + " movement(s) for a total of " + moneyPrint(sum([movement.amount for movement in monthMovements]))
+
+				income = sum([movement.amount for movement in monthMovements if movement.amount > 0])
+				expense = sum([movement.amount for movement in monthMovements if movement.amount < 0])
+
+				accountString += " \\newline\n\tIncome: " + moneyPrint(income) if income != 0 else ""
+				accountString += " \\newline\n\tExpense: " + moneyPrint(expense) if expense != 0 else ""
 			
 			accountString += "\n\\end{description}"
 		
 		# Movements
 
 		if len(account.movements) > 0:
-			accountString += "\n\n\\chapter*{" + account.name.upper() + " Movements}"
+			accountString += "\n\n\\part*{" + account.name[0].upper() + account.name[1:] + ": Movements}"
 			accountString += "\n\\thispagestyle{fancy}"
 
 		for year in years:
@@ -180,7 +192,7 @@ def report(user, sdOpts: dict) -> None:
 	reportTime = time.strftime("%Y-%m-%dT%H:%M")
 
 	reportText = template.replace("REPORTCONTENT", "\n\n".join(accountReports))
-	reportText = reportText.replace("DATE", "Compiled on " + time.strftime("%A, %B %d, %Y"))
+	reportText = reportText.replace("DATE", "Compiled on " + time.strftime("%A, %B %d, %Y at %H:%M"))
 	reportText = reportText.replace("TIMERANGE", timeRange)
 	reportText = reportText.replace("USER", str(user))
 

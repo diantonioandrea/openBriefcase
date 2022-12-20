@@ -1,4 +1,4 @@
-\documentclass{report}
+\documentclass[openany]{book}
 
 \usepackage{xcolor}
 \usepackage{xcolor-solarized}
@@ -40,12 +40,14 @@
 \renewcommand{\@chapapp}{Account}
 \makeatother
 
+\usepackage{etoolbox}
+\patchcmd{\part}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
+\renewcommand{\partname}{Account}
+
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{Page \thepage}
-\fancyhead[C]{DATE}
-\fancyhead[R]{USER}
-% \fancyhead[R]{USER $\cdot$ \href{https://github.com/diantonioandrea/openBriefcase}{openBriefcase}}
+\fancyhead[L]{DATE $\cdot$ Page \thepage}
+\fancyhead[R]{USER $\cdot$ \href{https://github.com/diantonioandrea/openBriefcase}{openBriefcase}}
 \fancyfoot[C]{USER's report $\cdot$ TIMERANGE \\ openBriefcase's been brought to you by Andrea Di Antonio $\cdot$ See more on \href{https://diantonioandrea.com}{diantonioandrea.com}}
 
 \def\Plus{\texttt{+}}

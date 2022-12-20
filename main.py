@@ -71,7 +71,7 @@ while True:
 
 	cmdString = "[" + user.name + "@openBriefcase"
 	if current != None:
-		cmdString += ">" + current.name
+		cmdString += "/" + current.name
 	cmdString += "]"
 
 	cmdHandler = {}
