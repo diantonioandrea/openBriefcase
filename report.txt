@@ -8,15 +8,15 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
-\usepackage[a3paper]{geometry}
+\usepackage[a4paper]{geometry}
 \usepackage[Bjarne]{fncychap}
 
 \setlength{\columnsep}{8mm}
 \def\columnseprulecolor{\color{solarized-base02}}
 
 \geometry{
-    inner=16mm,
-    outer=16mm,
+    inner=12mm,
+    outer=12mm,
     top=32mm,
     bottom=32mm,
     heightrounded,
@@ -42,10 +42,15 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{DATE}
-\fancyhead[C]{USER $\cdot$ \href{https://github.com/diantonioandrea/openBriefcase}{openBriefcase}}
-\fancyhead[R]{Page \thepage}
-\fancyfoot[C]{USER's report $\cdot$ TIMERANGE \\ openBriefcase's been brought to you by Andrea Di Antonio $\cdot$ See more of my projects on \href{https://diantonioandrea.com}{diantonioandrea.com}}
+\fancyhead[L]{Page \thepage}
+\fancyhead[C]{DATE}
+\fancyhead[R]{USER}
+% \fancyhead[R]{USER $\cdot$ \href{https://github.com/diantonioandrea/openBriefcase}{openBriefcase}}
+\fancyfoot[C]{USER's report $\cdot$ TIMERANGE \\ openBriefcase's been brought to you by Andrea Di Antonio $\cdot$ See more on \href{https://diantonioandrea.com}{diantonioandrea.com}}
+
+\def\Plus{\texttt{+}}
+\def\Minus{\texttt{-}}
+\def\Hash{\texttt{\#}}
 
 \begin{document}
 

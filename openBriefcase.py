@@ -33,7 +33,7 @@ def monthName(monthNumber: str) -> str:
 
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
-		return Fore.GREEN + str(round(amount, 2)) + "€" + Style.RESET_ALL
+		return Fore.GREEN + "+" + str(round(amount, 2)) + "€" + Style.RESET_ALL
 
 	else:
 		return Fore.RED + str(round(amount, 2)) + "€" + Style.RESET_ALL
@@ -51,6 +51,9 @@ class user:
 		self.passwordHash = ""
 
 		self.accounts = []
+	
+	def __str__(self):
+		return self.name[0].upper() + self.name[1:]
 
 	def login(self, passwordHash):
 		password = CLIbrary.strIn({"request": "Password", "noSpace": True, "fixedLength": 8})

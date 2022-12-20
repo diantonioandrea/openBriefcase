@@ -39,11 +39,11 @@ if userData != None:
 	user.accounts = userData.accounts
 	user.registrationDate = userData.registrationDate
 
-	print("\nWelcome back, " + user.name)
+	print("\nWelcome back, " + str(user))
 	print("Last login: " + time.strftime("%A, %B %d, %Y at %H:%M", userData.lastLogin) + "\n")
 
 else:
-	print("\nWelcome, " + user.name + "\n")
+	print("\nWelcome, " + str(user) + "\n")
 
 # Interface
 
@@ -174,7 +174,7 @@ while True:
 				continue
 
 		if cmd == "report":
-			if len(accounts) == 0 or max([len(account.movements) for account in accounts]) == 0:
+			if len(accounts) == 0 or min([len(account.movements) for account in accounts]) == 0:
 				print(Back.RED + Fore.WHITE + "NOTHING TO DO HERE" + Style.RESET_ALL)
 				continue
 
@@ -238,3 +238,5 @@ while True:
 			except:
 				print(Back.RED + Fore.WHITE + "MOVEMENT NOT FOUND" + Style.RESET_ALL)
 				continue
+
+print("\nGoodbye, " + str(user))

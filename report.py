@@ -32,10 +32,10 @@ def monthName(monthNumber: str) -> str:
 
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
-		return "\\color{solarized-green} " + str(round(amount, 2)) + "€ \\color{solarized-base02}"
+		return "\\color{solarized-green} \\Plus" + str(round(amount, 2)) + "€ \\color{solarized-base02}"
 
 	else:
-		return "\\color{solarized-red} " + str(round(amount, 2)) + "€ \\color{solarized-base02}"
+		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + "€ \\color{solarized-base02}"
 
 def report(user, sdOpts: dict) -> None:
 	accounts = user.accounts
@@ -71,24 +71,23 @@ def report(user, sdOpts: dict) -> None:
 		if end != "":
 			movements = [movement for movement in movements if movement.date <= end]
 
-		accountString = "\\chapter{" + account.name.upper() + "}\n"
-		accountString += "\\thispagestyle{fancy}\n\n"
+		accountString = "\\chapter{" + account.name.upper() + " Summary}"
+		accountString += "\n\\thispagestyle{fancy}\n\n"
 
-		accountString += "\\begin{center}\n\n"
+		# Summary
 
-		accountString += "\\Large{Account name: " + account.name + " \\\\ "
-		accountString += "\\Large{Opened with: " + moneyPrint(account.start) + " \\\\ "
-		accountString += "Account "
+		accountString += "\n\n\\section*{Summary}"
+		accountString += "\n\n\\subsection*{Statistics}"
+
+		accountString += "\n\nAccount name: " + account.name + ". \\newline"
+		accountString += "\nOpened with: " + moneyPrint(account.start) + " \\newline"
+		accountString += "\nAccount "
 
 		if start == end == "":
 			accountString += "balance: " + moneyPrint(account.balance)
 		
 		else:
 			accountString += "movements during the specified period: " + moneyPrint(sum([movement.amount for movement in movements]))
-
-		accountString += "}\n\n"
-
-		accountString += "\\end{center}\n\n"
 
 		years = set([movement.date.split("-")[0] for movement in movements])
 		years = list(years)
@@ -101,24 +100,68 @@ def report(user, sdOpts: dict) -> None:
 			months = list(months)
 			months.sort()
 
-			accountString += "\n\n\\section*{" + year + ", " + str(len(yearMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in yearMovements])) + "}\n"
-			accountString += "\\begin{multicols*}{2}"
+			accountString += "\n\n\\subsection*{" + year + "}"
+			accountString += "\n\n" + str(len(yearMovements)) + " movement(s) for a total of " + moneyPrint(sum([movement.amount for movement in yearMovements]))
+
+			accountString += "\n\n\\begin{description}"
 
 			for month in months:
 				monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
-				monthMovements.sort(key = lambda entry: entry.reason)
+				monthMovements.sort(key = lambda entry: entry.date)
 
-				accountString += "\n\n\\subsection*{" + monthName(month) + ", " + str(len(monthMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in monthMovements])) + "}"
-
-				for movement in monthMovements:
-					counter += 1
-
-					accountString += "\n\n \\noindent \\textbf{" + movement.reason.upper() + "}" + " $\\cdot$ " + "\n" + monthName(month) + " " + movement.date.split("-")[2] + ", " + year + " $\\cdot$ " + moneyPrint(movement.amount)
-
-			accountString += "\n\n\\end{multicols*}"
+				accountString += "\n\t\\item[" + monthName(month) + "] " + str(len(monthMovements)) + " movement(s) for a total of " + moneyPrint(sum([movement.amount for movement in monthMovements]))
+			
+			accountString += "\n\\end{description}"
 		
-		if counter != 0:
-			accountReports.append(accountString)
+		# Movements
+
+		accountString += "\n\n\\chapter*{" + account.name.upper() + " Movements}"
+		accountString += "\n\\thispagestyle{fancy}"
+
+
+		for year in years:
+			yearMovements = [movement for movement in movements if year in movement.date]
+
+			months = set([movement.date.split("-")[1] for movement in yearMovements])
+			months = list(months)
+			months.sort()
+
+			accountString += "\n\n\\section*{" + year + "}"
+			accountString += "\n\n\\begin{multicols*}{2}"
+			accountString += "\n\n\\begin{description}"
+
+			for month in months:
+				monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
+				monthMovements.sort(key = lambda entry: entry.date)
+
+				accountString += "\n\\item[" + monthName(month) + "] \\leavevmode"
+
+				days = set([movement.date.split("-")[2] for movement in monthMovements])
+				days = list(days)
+				days.sort()
+
+				accountString += "\n\t\\begin{description}"
+
+				for day in days:
+					dateString = year + "-" + month + "-" + day
+
+					dayMovements = [movement for movement in monthMovements if movement.date == dateString]
+					
+					accountString += "\n\t\t\\item[" + dateString + "] \\leavevmode"
+					accountString += "\n\t\t\\begin{description}"
+
+					for movement in dayMovements:
+						reasonString = movement.reason[0].upper() + movement.reason[1:]
+						accountString += "\n\t\t\t\\item[" + moneyPrint(movement.amount) + "] " + reasonString + " \\newline\n\t\t\t\\color{solarized-cyan} \\Hash" + movement.code + "\\color{solarized-base02}"
+					
+					accountString += "\n\t\t\\end{description}"
+				
+				accountString += "\n\t\\end{description}"
+		
+			accountString += "\n\\end{description}"
+			accountString += "\n\n\\end{multicols*}"
+
+		accountReports.append(accountString)
 	
 	templateFile = open("report.txt", "r")
 	template = templateFile.read()
@@ -135,20 +178,21 @@ def report(user, sdOpts: dict) -> None:
 	timeRange += "From " + start + " to " + end
 
 	reportTime = time.strftime("%Y-%m-%dT%H:%M")
-	reportFilePath = reportPath + "report_" + reportTime + ".tex"
 
 	reportText = template.replace("REPORTCONTENT", "\n\n".join(accountReports))
 	reportText = reportText.replace("DATE", "Compiled on " + time.strftime("%A, %B %d, %Y"))
 	reportText = reportText.replace("TIMERANGE", timeRange)
-	reportText = reportText.replace("USER", user.name)
+	reportText = reportText.replace("USER", str(user))
 
-	reportFile = open(reportFilePath, "w")
-	reportFile.write(reportText)
-	reportFile.close()
+	reportTexPath = reportPath + "lastReport.tex"
+	reportTex = open(reportTexPath, "w")
+	reportTex.write(reportText)
+	reportTex.close()
 
-	pdfl = PDFLaTeX.from_texfile(reportFilePath)
+	pdfl = PDFLaTeX.from_texfile(reportTexPath)
 	pdf, _, _ = pdfl.create_pdf()
 
-	reportPdf = open(reportFilePath.replace(".tex", ".pdf"), "wb")
+	reportFilePath = reportPath + "report_" + reportTime + ".pdf"
+	reportPdf = open(reportFilePath, "wb")
 	reportPdf.write(pdf)
 	reportPdf.close()
