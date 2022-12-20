@@ -35,7 +35,7 @@ while True:
 
 			else:
 				print(Back.RED + Fore.WHITE + "LOGIN ERROR" + Style.RESET_ALL)
-				
+
 				if CLIbrary.boolIn({"request": "Exit"}):
 					sys.exit(-1)
 				else:
