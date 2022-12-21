@@ -18,9 +18,9 @@ By:
 you'll obtain, out of the account environment:
 
 	exit
-			Exits the program.
+        Exits the program.
 	password
-			Lets the user pick a password to protect its account.
+			Lets the user pick a password to protect its account or disable it.
 	select
 			Enters the specified account environment.
 			Options:
@@ -38,14 +38,14 @@ you'll obtain, out of the account environment:
 	summary
 			Prints a summary of the accounts.
 	report
-			compile a report of all the account in the specified time range, if present.
+			compile a report of all the account in the specified time range, if present. Make sure to have at least a registered movement.
 			Options:
 					-s STARTING_TIME, -e ENDING_TIME
 
 and, in the account environment:
 
 	exit
-			Exits the account environment.
+        Exits the account environment.
 	new
 			Creates a new movement.
 	edit
