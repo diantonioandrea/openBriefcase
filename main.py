@@ -191,7 +191,7 @@ while True:
 				print(Back.RED + Fore.WHITE + "NOTHING TO DO HERE" + Style.RESET_ALL)
 				continue
 
-			report.report(user, sdOpts)
+			report.report(user, sdOpts, ddOpts)
 			continue
 	
 	else:

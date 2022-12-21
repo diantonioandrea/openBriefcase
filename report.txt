@@ -59,11 +59,11 @@
 \maketitle
 \thispagestyle{fancy}
 
-% \section*{Summary}
+\section*{Summary}
 
-% SUMMARY
+SUMMARY
 
-% \newpage
+\newpage
 
 REPORTCONTENT
 

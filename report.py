@@ -37,7 +37,7 @@ def moneyPrint(amount: float) -> str:
 	else:
 		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + "€ \\color{solarized-base02}"
 
-def report(user, sdOpts: dict) -> None:
+def report(user, sdOpts: dict, ddOpts: list) -> None:
 	accounts = user.accounts
 	reportPath = str(os.getcwd()) + "/report/"
 
@@ -49,7 +49,12 @@ def report(user, sdOpts: dict) -> None:
 		print(Back.RED + Fore.WHITE + "DATA ERROR" + Style.RESET_ALL)
 		sys.exit(-1)
 
-	accountSummary = [account.name[0].upper() + account.name[1:] + " opened with: " + moneyPrint(account.start) + ", balance: " + moneyPrint(account.balance) for account in accounts]
+	accountSummary = ["\\subsection*{User}"]
+	accountSummary += [" \\newline\n".join(["Username: " + str(user), "Registration date: " + time.strftime("%A, %B %d, %Y at %H:%M", user.registrationDate)])]
+
+	accountSummary += ["\\subsection*{Accounts}"]
+	accountSummary += ["\n".join(["\\begin{description}", "\n".join(["\t\\item[" + account.name[0].upper() + account.name[1:] + "] " + str(len(account.movements)) + " registered movement(s), opened with: " + moneyPrint(account.start) + " and with a current balance of: " + moneyPrint(account.balance) for account in accounts]), "\\end{description}"])]
+
 	accountReports = []
 
 	start = ""
@@ -75,7 +80,7 @@ def report(user, sdOpts: dict) -> None:
 
 		# Summary
 
-		accountString = "\n\n\\section*{Summary and movements for: " + account.name[0].upper() + account.name[1:] + "}"
+		accountString = "\\section*{Summary and movements for: " + account.name[0].upper() + account.name[1:] + "}"
 		accountString += "\n\n\\subsection*{Statistics}"
 
 		accountString += "\n\nAccount name: " + account.name + ". \\newline"
@@ -185,7 +190,7 @@ def report(user, sdOpts: dict) -> None:
 
 	reportTime = time.strftime("%Y-%m-%dT%H:%M")
 
-	reportText = template.replace("SUMMARY", "\\newline \n".join(accountSummary))
+	reportText = template.replace("SUMMARY", "\n\n".join(accountSummary))
 	reportText = reportText.replace("REPORTCONTENT", "\n\n".join(accountReports))
 	reportText = reportText.replace("DATE", "Compiled on " + time.strftime("%A, %B %d, %Y at %H:%M"))
 	reportText = reportText.replace("TIMERANGE", timeRange)
@@ -203,3 +208,10 @@ def report(user, sdOpts: dict) -> None:
 	reportPdf = open(reportFilePath, "wb")
 	reportPdf.write(pdf)
 	reportPdf.close()
+
+	if "keep" not in ddOpts:
+		try:
+			os.remove(reportTexPath)
+		
+		except:
+			pass
