@@ -8,23 +8,17 @@ reportsPath = str(os.getcwd()) + "/reports/"
 helpPath = str(os.getcwd()) + "/help/openBriefcaseHelp.json"
 accountHelpPath = str(os.getcwd()) + "/help/openBriefcaseAccountHelp.json"
 
-try: # Check the existence or create the data folder.
+init()
+try: # Check the existence or create the data and reports folder.
 	if not os.path.exists(dataPath):
 		os.makedirs(dataPath)
+	
+	if not os.path.exists(reportsPath):
+		os.makedirs(reportsPath)
 	
 except:
 	print(Back.RED + Fore.WHITE + "DATA ERROR" + Style.RESET_ALL)
 	sys.exit(-1)
-
-try: # Check the existence or create the reports folder.
-	if not os.path.exists(reportsPath):
-		os.makedirs(reportsPath)
-		
-except:
-	print(Back.RED + Fore.WHITE + "REPORTS ERROR" + Style.RESET_ALL)
-	sys.exit(-1)
-
-init()
 
 print("openBriefcase")
 print("Accounting utility written in Python and built with CLIbrary")
@@ -87,7 +81,13 @@ while True:
 
 	cmdHandler = {}
 	cmdHandler["request"] = cmdString
-	cmdHandler["style"] = Fore.GREEN
+
+	if sum([account.balance for account in accounts]) >= 0:
+		cmdHandler["style"] = Fore.GREEN
+	
+	else:
+		cmdHandler["style"] = Fore.RED
+
 	cmdHandler["verboseStyle"] = Back.YELLOW
 
 	if current == None:
@@ -146,7 +146,7 @@ while True:
 				print(Back.RED + Fore.WHITE + "NOTHING TO SEE HERE" + Style.RESET_ALL)
 				continue
 
-			print("Accounts for " + user.name + "\n")
+			print("Accounts and latest movements for " + user.name + "\n")
 
 			counter = 0
 
@@ -154,6 +154,7 @@ while True:
 				counter += 1
 
 				print(str(counter) + ". " + str(account))
+				print("\t" + "\n\t".join([str(movement) for movement in account.movements[-5:]]))
 
 			print("\nTotal amount: " + openBriefcase.moneyPrint(sum([account.balance for account in accounts])))
 
