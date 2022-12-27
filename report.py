@@ -50,7 +50,7 @@ def report(user, sdOpts: dict, ddOpts: list) -> None:
 		sys.exit(-1)
 
 	accountSummary = ["\\subsection*{User}"]
-	accountSummary += [" \\newline\n".join(["Username: " + str(user), "Registration date: " + time.strftime("%A, %B %d, %Y at %H:%M", user.registrationDate)])]
+	accountSummary += [" \\newline\n".join(["Username: " + str(user), "Liquidity: " + moneyPrint(sum(account.balance for account in accounts)), "Registration date: " + time.strftime("%A, %B %d, %Y at %H:%M", user.registrationDate)])]
 
 	accountSummary += ["\\subsection*{Accounts}"]
 	accountSummary += ["\n".join(["\\begin{description}", "\n".join(["\t\\item[" + account.name[0].upper() + account.name[1:] + "] " + str(len(account.movements)) + " registered movement(s), opened with: " + moneyPrint(account.start) + " and with a current balance of: " + moneyPrint(account.balance) for account in accounts]), "\\end{description}"])]
@@ -80,8 +80,8 @@ def report(user, sdOpts: dict, ddOpts: list) -> None:
 
 		# Summary
 
-		accountString = "\\section*{Summary and movements for: " + account.name[0].upper() + account.name[1:] + "}"
-		accountString += "\n\n\\subsection*{Statistics}"
+		accountString = "\\section*{Summary for: " + account.name[0].upper() + account.name[1:] + "}"
+		accountString += "\n\n\\subsection*{General statistics}"
 
 		accountString += "\n\nAccount name: " + account.name + ". \\newline"
 		accountString += "\nOpened with: " + moneyPrint(account.start) + " \\newline"
@@ -104,7 +104,7 @@ def report(user, sdOpts: dict, ddOpts: list) -> None:
 			months = list(months)
 			months.sort()
 
-			accountString += "\n\n\\subsection*{" + year + "}"
+			accountString += "\n\n\\subsection*{" + year + " statistics}"
 			accountString += "\n\n" + str(len(yearMovements)) + " movement(s) for a total of " + moneyPrint(sum([movement.amount for movement in yearMovements]))
 
 			income = sum([movement.amount for movement in yearMovements if movement.amount > 0])
@@ -128,8 +128,22 @@ def report(user, sdOpts: dict, ddOpts: list) -> None:
 				accountString += " \\newline\n\tExpense: " + moneyPrint(expense) if expense != 0 else ""
 			
 			accountString += "\n\\end{description} \n\n\\newpage"
+
+			accountReports.append(accountString)
 		
-		# Movements
+	# Movements
+
+	for account in accounts:
+		movements = account.movements
+
+		if len(movements) == 0:
+			continue
+
+		accountString = "\\section*{Movements for: " + account.name[0].upper() + account.name[1:] + "}"
+
+		years = set([movement.date.split("-")[0] for movement in movements])
+		years = list(years)
+		years.sort()
 
 		for year in years:
 			yearMovements = [movement for movement in movements if year in movement.date]
@@ -201,7 +215,9 @@ def report(user, sdOpts: dict, ddOpts: list) -> None:
 	reportTex.write(reportText)
 	reportTex.close()
 
-	pdfl = PDFLaTeX.from_texfile(reportTexPath)
+	for _ in range(10):
+		pdfl = PDFLaTeX.from_texfile(reportTexPath)
+		
 	pdf, _, _ = pdfl.create_pdf()
 
 	reportFilePath = reportPath + "report_" + reportTime + ".pdf"

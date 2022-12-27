@@ -1,9 +1,9 @@
-import CLIbrary, openBriefcase, report, os, sys, time
+import CLIbrary, openBriefcase, report, os, sys, time, random
 from colorama import init, Fore, Back, Style
 
 dataPath = str(os.getcwd()) + "/data/"
-helpPath = str(os.getcwd()) + "/openBriefcaseHelp.json"
-accountHelpPath = str(os.getcwd()) + "/openBriefcaseAccountHelp.json"
+helpPath = str(os.getcwd()) + "/help/openBriefcaseHelp.json"
+accountHelpPath = str(os.getcwd()) + "/help/openBriefcaseAccountHelp.json"
 
 try: # Check the existence or create the data folder.
 	if not os.path.exists(dataPath):
@@ -90,6 +90,9 @@ while True:
 	if current == None:
 		cmdHandler["allowedCommands"] += ["password", "select", "report"]
 
+	else:
+		cmdHandler["allowedCommands"] += ["load", "dump"]
+
 	command = CLIbrary.cmdIn(cmdHandler)
 
 	cmd = command["command"]
@@ -152,6 +155,7 @@ while True:
 				current = [account for account in accounts if account.name == sdOpts["n"]].pop()
 
 			except:
+				print(Back.RED + Fore.WHITE + "ACCOUNT NOT FOUND" + Style.RESET_ALL)
 				current = None
 
 		if cmd == "edit":
@@ -247,5 +251,38 @@ while True:
 			except:
 				print(Back.RED + Fore.WHITE + "MOVEMENT NOT FOUND" + Style.RESET_ALL)
 				continue
+		
+		if cmd == "load":
+			oldMovements = len(current.movements)
+			loadFiles = [filename for filename in os.listdir(dataPath) if ".obcm" in filename]
+
+			if len(loadFiles) == 0:
+				print(Back.RED + Fore.WHITE + "NOTHING TO LOAD" + Style.RESET_ALL)
+				continue
+
+			loadFile = CLIbrary.listCh({"list": loadFiles})
+			current.load({"path": dataPath + loadFile})
+
+			print(cmdHandler["verboseStyle"] + "LOADED " + str(len(current.movements) - oldMovements) + " MOVEMENTS FROM " + loadFile + Style.RESET_ALL)
+			continue
+	
+		if cmd == "dump":
+			if len(current.movements) == 0:
+				print(Back.RED + Fore.WHITE + "NOTHING TO DUMP" + Style.RESET_ALL)
+				continue
+
+			dumpCodes = [filename.replace(".obcm", "") for filename in os.listdir(dataPath) if ".obcm" in filename]
+
+			while True:
+				dumpCode = str(random.randint(10**5, 10**6-1))
+
+				if dumpCode not in dumpCodes:
+					break
+
+			dumpFile = current.name + "_" + dumpCode + ".obcm"
+
+			current.dump({"path": dataPath + dumpFile}, sdOpts)
+			print(cmdHandler["verboseStyle"] + "DUMPED TO " + dumpFile + Style.RESET_ALL)
+			continue
 
 print("\nGoodbye, " + str(user))

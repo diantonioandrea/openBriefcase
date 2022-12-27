@@ -45,7 +45,7 @@ class user:
 		self.name = CLIbrary.strIn({"request": "\nUser", "noSpace": True})
 
 		self.registrationDate = time.localtime()
-		self.lastLogin = time.localtime()
+		self.lastLogin = self.registrationDate
 
 		self.protected = False
 		self.passwordHash = ""
@@ -71,7 +71,7 @@ class account:
 		self.start = CLIbrary.numIn({"request": "Starting balance"})
 
 		self.creationDate = time.localtime()
-		self.lastModified = time.localtime()
+		self.lastModified = self.creationDate
 
 		self.balance = self.start
 		self.movements = []
@@ -125,15 +125,60 @@ class account:
 				for movement in monthMovements:
 					counter += 1
 					print("\t\t" + str(counter) + ". " + str(movement))
-			
+
+	def load(self, fileHandler: dict):
+		loadData = CLIbrary.aLoad(fileHandler)
+
+		try:
+			if not bcrypt.checkpw("".join([movement.dump() for movement in loadData["movements"]]).encode(), loadData["hash"]):
+				print(Back.RED + Fore.WHITE + "CORRUPTED DATA" + Style.RESET_ALL)
+				return None
+		
+		except:
+			print(Back.RED + Fore.WHITE + "DATA ERROR" + Style.RESET_ALL)
+
+		newMovements = [movement for movement in loadData["movements"] if movement.code not in [movement.code for movement in self.movements]]
+
+		if len(newMovements) == 0:
+			print(Back.RED + Fore.WHITE + "NO LOADABLE MOVEMENTS FOUND" + Style.RESET_ALL)
+			return None
+
+		if CLIbrary.boolIn({"request": "Found " + str(len(newMovements)) + " loadable movement(s): \n\n" + "\n".join([str(movement) for movement in newMovements]) + "\n\nLoad the found movement(s)?"}):
+			self.movements += newMovements
+
+		self.update()
+
+	def dump(self, fileHandler: dict, sdOpts):
+		dumpData = dict()
+		dumpMovements = [movement for movement in self.movements]
+
+		if "s" in sdOpts:
+			try:
+				dumpMovements = [movement for movement in dumpMovements if movement.date >= sdOpts["s"]]
+			except:
+				pass
+
+		if "e" in sdOpts:
+			try:
+				dumpMovements = [movement for movement in dumpMovements if movement.date <= sdOpts["s"]]
+			except:
+				pass
+
+		dumpData["hash"] = bcrypt.hashpw("".join([movement.dump() for movement in dumpMovements]).encode(), bcrypt.gensalt())
+		dumpData["movements"] = dumpMovements
+
+		fileHandler["data"] = dumpData
+
+		CLIbrary.aDump(fileHandler)
+
 class movement:
 	def __init__(self, otherCodes: list):
+		self.creationDate = time.localtime()
+		self.lastModified = self.creationDate
+
 		self.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
 		self.amount = CLIbrary.numIn({"request": "Movement amount"})
 		self.date = CLIbrary.dateIn({"request": "Movement date"})
-
-		self.creationDate = time.localtime()
-		self.lastModified = time.localtime()
 
 		while True:
 			self.code = str(random.randint(10**6, 10**7-1))
@@ -145,3 +190,7 @@ class movement:
 
 	def __str__(self):
 		return self.date + ", " + self.reason + ": " + moneyPrint(self.amount) + Fore.CYAN + " #" + self.code + Style.RESET_ALL
+
+	def dump(self) -> str:
+		# date_reason_amount_code
+		return "_".join([self.date, self.reason, str(self.amount), self.code])

@@ -15,5 +15,13 @@
 	},
 	"summary": {
 		"description": "Prints a summary of the account's movements."
+	},
+	"load": {
+		"description": "Loads a set of movements from a file.",
+		"mandatoryOptions": "-c MOVEMENT_CODE"
+	},
+	"dump": {
+		"description": "Dumps a set of movements to a file.",
+		"options": "-s STARTING_TIME, -e ENDING_TIME"
 	}
 }
