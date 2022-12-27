@@ -37,17 +37,8 @@ def moneyPrint(amount: float) -> str:
 	else:
 		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + "€ \\color{solarized-base02}"
 
-def report(user, sdOpts: dict, ddOpts: list) -> None:
+def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, resourcesPath: str) -> None:
 	accounts = user.accounts
-	reportPath = str(os.getcwd()) + "/report/"
-
-	try:
-		if not os.path.exists(reportPath):
-			os.makedirs(reportPath)
-		
-	except:
-		print(Back.RED + Fore.WHITE + "DATA ERROR" + Style.RESET_ALL)
-		sys.exit(-1)
 
 	accountSummary = ["\\subsection*{User}"]
 	accountSummary += [" \\newline\n".join(["Username: " + str(user), "Liquidity: " + moneyPrint(sum(account.balance for account in accounts)), "Registration date: " + time.strftime("%A, %B %d, %Y at %H:%M", user.registrationDate)])]
@@ -188,7 +179,7 @@ def report(user, sdOpts: dict, ddOpts: list) -> None:
 
 		accountReports.append(accountString)
 	
-	templateFile = open("report.txt", "r")
+	templateFile = open(resourcesPath + "report.txt", "r")
 	template = templateFile.read()
 	templateFile.close()
 
@@ -210,7 +201,7 @@ def report(user, sdOpts: dict, ddOpts: list) -> None:
 	reportText = reportText.replace("TIMERANGE", timeRange)
 	reportText = reportText.replace("USER", str(user))
 
-	reportTexPath = reportPath + "lastReport.tex"
+	reportTexPath = reportsPath + "lastReport.tex"
 	reportTex = open(reportTexPath, "w")
 	reportTex.write(reportText)
 	reportTex.close()
@@ -220,7 +211,7 @@ def report(user, sdOpts: dict, ddOpts: list) -> None:
 		
 	pdf, _, _ = pdfl.create_pdf()
 
-	reportFilePath = reportPath + "report_" + reportTime + ".pdf"
+	reportFilePath = reportsPath + "report_" + reportTime + ".pdf"
 	reportPdf = open(reportFilePath, "wb")
 	reportPdf.write(pdf)
 	reportPdf.close()

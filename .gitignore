@@ -1,14 +1,14 @@
 # OPENBRIEFCASE
 
 data
-report
+reports
 
-# MAKE OPENBRIEFCASE
+# MAKE COMPILE
 
 build
 dist
 *.spec
-openBriefcase
+release
 
 # OTHERS
 

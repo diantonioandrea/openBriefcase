@@ -2,6 +2,9 @@ import CLIbrary, openBriefcase, report, os, sys, time, random
 from colorama import init, Fore, Back, Style
 
 dataPath = str(os.getcwd()) + "/data/"
+resourcesPath = str(os.getcwd()) + "/resources/" # Must exist
+reportsPath = str(os.getcwd()) + "/reports/"
+
 helpPath = str(os.getcwd()) + "/help/openBriefcaseHelp.json"
 accountHelpPath = str(os.getcwd()) + "/help/openBriefcaseAccountHelp.json"
 
@@ -11,6 +14,14 @@ try: # Check the existence or create the data folder.
 	
 except:
 	print(Back.RED + Fore.WHITE + "DATA ERROR" + Style.RESET_ALL)
+	sys.exit(-1)
+
+try: # Check the existence or create the reports folder.
+	if not os.path.exists(reportsPath):
+		os.makedirs(reportsPath)
+		
+except:
+	print(Back.RED + Fore.WHITE + "REPORTS ERROR" + Style.RESET_ALL)
 	sys.exit(-1)
 
 init()
@@ -195,7 +206,7 @@ while True:
 				print(Back.RED + Fore.WHITE + "NOTHING TO DO HERE" + Style.RESET_ALL)
 				continue
 
-			report.report(user, sdOpts, ddOpts)
+			report.report(user, sdOpts, ddOpts, reportsPath, resourcesPath)
 			continue
 	
 	else:
