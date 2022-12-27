@@ -74,6 +74,7 @@ while True:
 	fileHandler["data"] = user # type: ignore
 	CLIbrary.aDump(fileHandler)
 
+	# Prompt.
 	cmdString = "[" + user.name + "@openBriefcase"
 	if current != None:
 		cmdString += "/" + current.name
@@ -82,6 +83,7 @@ while True:
 	cmdHandler = {}
 	cmdHandler["request"] = cmdString
 
+	# The prompt turns red should the liquidity go below zero.
 	if sum([account.balance for account in accounts]) >= 0:
 		cmdHandler["style"] = Fore.GREEN
 	
@@ -90,6 +92,7 @@ while True:
 
 	cmdHandler["verboseStyle"] = Back.YELLOW
 
+	# The help that gets printed, as do the commands, depends on the environment.
 	if current == None:
 		cmdHandler["helpPath"] = helpPath
 	
@@ -111,15 +114,15 @@ while True:
 	ddOpts = command["ddOpts"]
 	output = command["output"]
 
-	if cmd == "help":
+	if cmd == "help": # Prints the help.
 		print(output)
 		continue
 
 	if current == None:
-		if cmd == "exit":
+		if cmd == "exit": # Exits the program.
 			break
 
-		if cmd == "password":
+		if cmd == "password": # Toggles the password protection.
 			if user.protected:
 				if user.login(user.passwordHash):
 					print(cmdHandler["verboseStyle"] + "PASSWORD DISABLED" + Style.RESET_ALL)
@@ -135,13 +138,13 @@ while True:
 			print(cmdHandler["verboseStyle"] + "PASSWORD SET" + Style.RESET_ALL)
 			continue
 
-		if cmd == "new":
+		if cmd == "new": # Creates a new account.
 			newAccount = openBriefcase.account([account.name for account in accounts])
 
 			if CLIbrary.boolIn({"request": "Verify \"" + str(newAccount) + "\""}):
 				accounts.append(newAccount)
 
-		if cmd == "summary":
+		if cmd == "summary": # Prints the accounts summary including the latest movements.
 			if len(accounts) == 0:
 				print(Back.RED + Fore.WHITE + "NOTHING TO SEE HERE" + Style.RESET_ALL)
 				continue
@@ -158,7 +161,7 @@ while True:
 
 			print("\nTotal amount: " + openBriefcase.moneyPrint(sum([account.balance for account in accounts])))
 
-		if cmd == "select":
+		if cmd == "select": # Swaps the base environment with the selected account enviroment.
 			if "n" not in sdOpts:
 				print(Back.RED + Fore.WHITE + "MISSING OPTION" + Style.RESET_ALL)
 				continue
@@ -170,7 +173,7 @@ while True:
 				print(Back.RED + Fore.WHITE + "ACCOUNT NOT FOUND" + Style.RESET_ALL)
 				current = None
 
-		if cmd == "edit":
+		if cmd == "edit": # Edits an account name.
 			if "n" not in sdOpts:
 				print(Back.RED + Fore.WHITE + "MISSING OPTION(S)" + Style.RESET_ALL)
 				continue
@@ -187,7 +190,7 @@ while True:
 				print(Back.RED + Fore.WHITE + "ACCOUNT NOT FOUND" + Style.RESET_ALL)
 				continue
 
-		if cmd == "remove":
+		if cmd == "remove": # Removes an account.
 			if "n" not in sdOpts:
 				print(Back.RED + Fore.WHITE + "MISSING OPTION" + Style.RESET_ALL)
 				continue
@@ -202,7 +205,7 @@ while True:
 				print(Back.RED + Fore.WHITE + "ACCOUNT NOT FOUND" + Style.RESET_ALL)
 				continue
 
-		if cmd == "report":
+		if cmd == "report": # Compiles the report for the selected time range.
 			if len(accounts) == 0 or max([len(account.movements) for account in accounts]) == 0:
 				print(Back.RED + Fore.WHITE + "NOTHING TO DO HERE" + Style.RESET_ALL)
 				continue
@@ -211,19 +214,19 @@ while True:
 			continue
 	
 	else:
-		if cmd == "exit":
+		if cmd == "exit": # Exits the account enviroment.
 			current = None
 			continue
 
-		if cmd == "new":
+		if cmd == "new": # Creates a new movement.
 			current.addMovement()
 			continue
 
-		if cmd == "summary":
+		if cmd == "summary": # Prints the summary for the current account.
 			current.summary()
 			continue
 
-		if cmd == "edit":
+		if cmd == "edit": # Edits a movement.
 			if "c" not in sdOpts or set(ddOpts).intersection({"reason", "amount", "date"}) == set():
 				print(Back.RED + Fore.WHITE + "MISSING OPTION(S)" + Style.RESET_ALL)
 				continue
@@ -249,7 +252,7 @@ while True:
 				print(Back.RED + Fore.WHITE + "MOVEMENT NOT FOUND" + Style.RESET_ALL)
 				continue
 
-		if cmd == "remove":
+		if cmd == "remove": # Removes a movement.
 			if "c" not in sdOpts:
 				print(Back.RED + Fore.WHITE + "MISSING OPTION" + Style.RESET_ALL)
 				continue
@@ -264,7 +267,7 @@ while True:
 				print(Back.RED + Fore.WHITE + "MOVEMENT NOT FOUND" + Style.RESET_ALL)
 				continue
 		
-		if cmd == "load":
+		if cmd == "load": # Loads movements from a ".obcm" file.
 			oldMovements = len(current.movements)
 			loadFiles = [filename for filename in os.listdir(dataPath) if ".obcm" in filename]
 
@@ -278,7 +281,7 @@ while True:
 			print(cmdHandler["verboseStyle"] + "LOADED " + str(len(current.movements) - oldMovements) + " MOVEMENTS FROM " + loadFile + Style.RESET_ALL)
 			continue
 	
-		if cmd == "dump":
+		if cmd == "dump": # Dumps movements to a ".obcm" file.
 			if len(current.movements) == 0:
 				print(Back.RED + Fore.WHITE + "NOTHING TO DUMP" + Style.RESET_ALL)
 				continue
