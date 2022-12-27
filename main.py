@@ -2,8 +2,8 @@ import CLIbrary, openBriefcase, report, os, sys, time, random
 from colorama import init, Fore, Back, Style
 
 dataPath = str(os.getcwd()) + "/data/"
-resourcesPath = str(os.getcwd()) + "/resources/" # Must exist
 reportsPath = str(os.getcwd()) + "/reports/"
+resourcesPath = str(os.getcwd()) + "/resources/" # Must exist.
 
 helpPath = str(os.getcwd()) + "/help/openBriefcaseHelp.json"
 accountHelpPath = str(os.getcwd()) + "/help/openBriefcaseAccountHelp.json"
@@ -102,7 +102,7 @@ while True:
 	cmdHandler["allowedCommands"] = ["new", "summary", "edit", "remove"]
 
 	if current == None:
-		cmdHandler["allowedCommands"] += ["password", "select", "report"]
+		cmdHandler["allowedCommands"] += ["password", "select", "delete", "report"]
 
 	else:
 		cmdHandler["allowedCommands"] += ["load", "dump"]
@@ -204,6 +204,17 @@ while True:
 			except:
 				print(Back.RED + Fore.WHITE + "ACCOUNT NOT FOUND" + Style.RESET_ALL)
 				continue
+		
+		if cmd == "delete": # Deletes the profile.
+			deletionCode = str(random.randint(10**3, 10**4-1))
+
+			if CLIbrary.strIn({"request": "Given that this action is irreversible, insert \"" + deletionCode + "\" to delete your profile"}) == deletionCode:
+				os.remove(dataPath + user.name + ".obc")
+				print(cmdHandler["verboseStyle"] + "PROFILE DELETED" + Style.RESET_ALL)
+				break
+
+			print(Back.RED + Fore.WHITE + "WRONG CODE" + Style.RESET_ALL)
+			continue
 
 		if cmd == "report": # Compiles the report for the selected time range.
 			if len(accounts) == 0 or max([len(account.movements) for account in accounts]) == 0:
@@ -286,7 +297,7 @@ while True:
 				print(Back.RED + Fore.WHITE + "NOTHING TO DUMP" + Style.RESET_ALL)
 				continue
 
-			dumpCodes = [filename.replace(".obcm", "") for filename in os.listdir(dataPath) if ".obcm" in filename]
+			dumpCodes = [filename.replace(current.name + "_", "").replace(".obcm", "") for filename in os.listdir(dataPath) if ".obcm" in filename]
 
 			while True:
 				dumpCode = str(random.randint(10**5, 10**6-1))
