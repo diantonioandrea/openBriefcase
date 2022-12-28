@@ -1,8 +1,8 @@
 compile:
 	pyinstaller --onefile --console main.py
-	mv dist/main dist/openBriefcase
+	mv dist/main openBriefcase
 	mkdir -p release
-	zip -r "release/openBriefcase.zip" dist/openBriefcase help/ resources/
+	zip -r "release/openBriefcase.zip" openBriefcase help/ resources/
 
 clean:
 	rm -rf dist build reports release data

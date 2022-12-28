@@ -157,7 +157,7 @@ while True:
 				counter += 1
 
 				print(str(counter) + ". " + str(account))
-				print("\t" + "\n\t".join([str(movement) for movement in account.movements[-5:]]))
+				print("\t" + "\n\t".join([str(movement) for movement in account.movements[-3:]]))
 
 			print("\nTotal amount: " + openBriefcase.moneyPrint(sum([account.balance for account in accounts])))
 
