@@ -127,6 +127,12 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, resourcesPath: st
 	for account in accounts:
 		movements = account.movements
 
+		if start != "":
+			movements = [movement for movement in movements if movement.date >= start]
+
+		if end != "":
+			movements = [movement for movement in movements if movement.date <= end]
+
 		if len(movements) == 0:
 			continue
 
