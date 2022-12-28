@@ -93,38 +93,39 @@ class account:
 		self.update()
 
 	def summary(self):
-		print("Summary for " + str(self))
-		print("Opened with " + moneyPrint(self.start))
+		print("Summary for: " + self.name)
 
-		if len(self.movements) == 0:
-			print(Back.RED + "NO MOVEMENTS" + Style.RESET_ALL)
-			return None
+		if len(self.movements) != 0:
+			print("\nAccount movements [DATE, REASON: AMOUNT #CODE]: ")
 
-		print("\nFormat: DATE, REASON: AMOUNT #CODE")
+			years = set([movement.date.split("-")[0] for movement in self.movements])
+			years = list(years)
+			years.sort()
 
-		years = set([movement.date.split("-")[0] for movement in self.movements])
-		years = list(years)
-		years.sort()
+			for year in years:
+				yearMovements = [movement for movement in self.movements if year in movement.date]
 
-		for year in years:
-			yearMovements = [movement for movement in self.movements if year in movement.date]
+				months = set([movement.date.split("-")[1] for movement in yearMovements])
+				months = list(months)
+				months.sort()
 
-			months = set([movement.date.split("-")[1] for movement in yearMovements])
-			months = list(months)
-			months.sort()
+				print("\n" + year + ", " + str(len(yearMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in yearMovements])))
 
-			print("\n" + year + ", " + str(len(yearMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in yearMovements])))
+				for month in months:
+					monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
+					monthMovements.sort(key = lambda entry: entry.date)
 
-			for month in months:
-				monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
-				monthMovements.sort(key = lambda entry: entry.date)
+					counter = 0
+					print("\n\t" + monthName(month) + ", " + str(len(monthMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in monthMovements])) + "\n")
 
-				counter = 0
-				print("\n\t" + monthName(month) + ", " + str(len(monthMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in monthMovements])) + "\n")
+					for movement in monthMovements:
+						counter += 1
+						print("\t\t" + str(counter) + ". " + str(movement))
+		else:
+			print("\n" + Back.RED + "NO MOVEMENTS" + Style.RESET_ALL)
 
-				for movement in monthMovements:
-					counter += 1
-					print("\t\t" + str(counter) + ". " + str(movement))
+		print("\nOpened with " + moneyPrint(self.start))
+		print("Balance: " + moneyPrint(self.balance))
 
 	def load(self, fileHandler: dict):
 		loadData = CLIbrary.aLoad(fileHandler)
