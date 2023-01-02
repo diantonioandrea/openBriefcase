@@ -1,10 +1,10 @@
 import CLIbrary, openBriefcase, report
 
-import os, sys, time, random, shutil
+import os, sys, time, random, shutil, requests
 from colorama import init, Fore, Back, Style
 init()
 
-version = "1.0.0"
+version = "v1.0.0"
 production = True
 
 cmdHandler = {}
@@ -33,6 +33,7 @@ helpPath = resourcesPath + "openBriefcaseHelp.json"
 accountHelpPath = resourcesPath + "openBriefcaseAccountHelp.json"
 reportTemplatePath = resourcesPath + "report.txt"
 
+# Installation
 if "install" in sys.argv and "./" in "".join(sys.argv) and production:
 	try:
 		currentPath = os.getcwd() + "/"
@@ -89,12 +90,12 @@ except:
 	sys.exit(-1)
 
 print(Back.MAGENTA + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL) if production else print(Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL)
+
 print("Accounting utility written in Python and built with CLIbrary")
 print("Developed by " + Style.BRIGHT + Fore.MAGENTA + "Andrea Di Antonio" + Style.RESET_ALL + ", more on https://github.com/diantonioandrea/openBriefcase")
 print("Type \'help\' if needed")
 
 # Login or register
-
 while True:
 	user = openBriefcase.user()
 
@@ -130,8 +131,18 @@ while True:
 		print("\nWelcome, " + str(user) + "\n")
 		break
 
-# Interface
+# Check for updates
+if production:
+	try:
+		latestVersion = requests.get("https://github.com/diantonioandrea/openBriefcase/releases/latest").url.split("/")[-1]
 
+		if  latestVersion > version:
+			CLIbrary.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion, "after": "\n"})
+
+	except:
+		CLIbrary.output({"error": True, "string": "COULD NOT CHECK FOR UPDATES"})
+
+# Interface
 accounts = user.accounts
 current = None
 
