@@ -39,7 +39,7 @@ def moneyPrint(amount: float) -> str:
 		return Fore.RED + str(round(amount, 2)) + "€" + Style.RESET_ALL
 
 def genCode(otherCodes: list, length: int) -> str:
-	characters = list(range(48, 58)) + list(range(65, 91)) + list(range(97, 123))
+	characters = list(range(48, 58)) + list(range(97, 123))
 
 	while True:
 		code = "".join([chr(random.choice(characters)) for _ in range(length)])
