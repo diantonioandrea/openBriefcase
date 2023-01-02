@@ -1,5 +1,5 @@
 import CLIbrary, bcrypt, random, time
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 
 # Utilities
 
