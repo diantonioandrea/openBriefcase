@@ -33,7 +33,7 @@ helpPath = resourcesPath + "openBriefcaseHelp.json"
 accountHelpPath = resourcesPath + "openBriefcaseAccountHelp.json"
 reportTemplatePath = resourcesPath + "report.txt"
 
-if "install" in sys.argv and production:
+if "install" in sys.argv and "./" in "".join(sys.argv) and production:
 	try:
 		currentPath = os.getcwd() + "/"
 		
