@@ -6,9 +6,15 @@ Accounting utility written in Python and built with [CLIbrary](https://github.co
 
 ## Usage
 
-**openBriefcase** can be built by:
+**openBriefcase** can be compiled by:
 
 	make compile
+
+and it can be installed by:
+
+	./openBriefcase install
+	
+This is available, for now, only on macOS.
 
 ## Commands
 
