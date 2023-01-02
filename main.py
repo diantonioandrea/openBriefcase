@@ -88,7 +88,7 @@ except:
 
 	sys.exit(-1)
 
-print(Back.MAGENTA + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL) if production else print("openBriefcase")
+print(Back.MAGENTA + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL) if production else print(Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL)
 print("Accounting utility written in Python and built with CLIbrary")
 print("Developed by Andrea Di Antonio, more on https://github.com/diantonioandrea/openBriefcase")
 print("Type \'help\' if needed")
