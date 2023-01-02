@@ -1,7 +1,7 @@
 import CLIbrary, openBriefcase, report
 
 import os, sys, time, random, shutil
-from colorama import init, Fore, Style
+from colorama import init, Fore, Back, Style
 init()
 
 version = "1.0.0"
@@ -69,7 +69,7 @@ except:
 	CLIbrary.output({"error": True, "string": "DATA OR RESOURCES ERROR"})
 
 	if production:
-		CLIbrary.output({"error": True, "string": "TRY REINSTALLING OPENBRIEFCASE"})
+		CLIbrary.output({"verbose": True, "string": "TRY REINSTALLING OPENBRIEFCASE"})
 
 	sys.exit(-1)
 
@@ -84,11 +84,11 @@ except:
 	CLIbrary.output({"error": True, "string": "RESOURCES ERROR"})
 
 	if production:
-		CLIbrary.output({"error": True, "string": "TRY REINSTALLING OPENBRIEFCASE"})
+		CLIbrary.output({"verbose": True, "string": "TRY REINSTALLING OPENBRIEFCASE"})
 
 	sys.exit(-1)
 
-print(Fore.MAGENTA + "openBriefcase" + Style.RESET_ALL + " v" + version) if production else print("openBriefcase")
+print(Back.BLUE + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.BLUE + " openBriefcase " + Style.RESET_ALL) if production else print("openBriefcase")
 print("Accounting utility written in Python and built with CLIbrary")
 print("Developed by Andrea Di Antonio, more on https://github.com/diantonioandrea/openBriefcase")
 print("Type \'help\' if needed")
@@ -152,19 +152,21 @@ while True:
 
 	cmdHandler["request"] = cmdString
 
-	# The prompt turns red should the liquidity go below zero.
-	if sum([account.balance for account in accounts]) >= 0:
-		cmdHandler["style"] = Fore.GREEN
-	
-	else:
-		cmdHandler["style"] = Fore.RED
-
 	# The help that gets printed, as do the commands, depends on the environment.
 	if current == None:
 		cmdHandler["helpPath"] = helpPath
+
+		cmdHandler["style"] = Fore.BLUE
 	
 	else:
 		cmdHandler["helpPath"] = accountHelpPath
+
+		# The prompt turns red should balance go below zero.
+		if current.balance >= 0:
+			cmdHandler["style"] = Fore.GREEN
+		
+		else:
+			cmdHandler["style"] = Fore.RED
 
 	cmdHandler["allowedCommands"] = ["new", "summary", "edit", "remove"]
 
