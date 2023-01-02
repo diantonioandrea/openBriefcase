@@ -136,11 +136,17 @@ if production:
 	try:
 		latestVersion = requests.get("https://github.com/diantonioandrea/openBriefcase/releases/latest").url.split("/")[-1]
 
-		if  latestVersion > version:
+		if version == latestVersion:
+			CLIbrary.output({"verbose": True, "string": "YOU'RE ON THE LATEST VERSION", "after": "\n"})
+
+		elif  version < latestVersion:
 			CLIbrary.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion, "after": "\n"})
 
+		elif  version > latestVersion:
+			CLIbrary.output({"verbose": True, "string": "YOU'RE ON AN UNRELEASED VERSION", "after": "\n"})
+
 	except:
-		CLIbrary.output({"error": True, "string": "COULD NOT CHECK FOR UPDATES"})
+		CLIbrary.output({"error": True, "string": "COULD NOT CHECK FOR UPDATES", "after": "\n"})
 
 # Interface
 accounts = user.accounts
