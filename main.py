@@ -1,26 +1,94 @@
-import CLIbrary, openBriefcase, report, os, sys, time, random
+import CLIbrary, openBriefcase, report
+
+import os, sys, time, random, shutil
 from colorama import init, Fore, Back, Style
-
-dataPath = str(os.getcwd()) + "/data/"
-reportsPath = str(os.getcwd()) + "/reports/"
-resourcesPath = str(os.getcwd()) + "/resources/" # Must exist.
-
-helpPath = str(os.getcwd()) + "/help/openBriefcaseHelp.json"
-accountHelpPath = str(os.getcwd()) + "/help/openBriefcaseAccountHelp.json"
-
 init()
-try: # Check the existence or create the data and reports folder.
+
+version = "1.0.0"
+production = True
+
+cmdHandler = {}
+cmdHandler["verboseStyle"] = Back.YELLOW
+
+if "openBriefcase" not in "".join(sys.argv):
+	production = False
+
+if production: # Production.
+	path = os.getenv("PATH")
+	basePath = os.getenv("HOME")
+
+	dataPath = basePath + "/Library/openBriefcase" + "/data/"
+	resourcesPath = basePath + "/Library/openBriefcase" + "/resources/"
+	reportsPath = basePath + "/Documents/Accounting/Reports/"
+	installPath = basePath + "/Documents/Accounting/"
+
+else: # Testing.
+	basePath = str(os.getcwd())
+
+	dataPath = basePath + "/data/"
+	reportsPath = basePath + "/reports/"
+	resourcesPath = basePath + "/resources/"
+
+helpPath = resourcesPath + "openBriefcaseHelp.json"
+accountHelpPath = resourcesPath + "openBriefcaseAccountHelp.json"
+reportTemplatePath = resourcesPath + "report.txt"
+
+if "install" in sys.argv and production:
+	try:
+		currentPath = os.getcwd() + "/"
+		
+		if not os.path.exists(resourcesPath):
+			os.makedirs(resourcesPath)
+
+		for file in os.listdir(currentPath + "resources/"):
+			shutil.copy(currentPath + "resources/" + file, resourcesPath + file)
+
+		shutil.copy(currentPath + "openBriefcase", installPath + "openBriefcase")
+
+		if installPath not in path:
+			print(Back.RED + Fore.WHITE + "MAKE SURE TO ADD \'" + installPath + "\' TO PATH" + Style.RESET_ALL)
+		
+		print(cmdHandler["verboseStyle"] + "OPENBRIEFCASE INSTALLED SUCCESFULLY" + Style.RESET_ALL)
+		sys.exit(0)
+	
+	except(KeyboardInterrupt):
+		print(Back.RED + Fore.WHITE + "INSTALLATION ERROR" + Style.RESET_ALL)
+		sys.exit(-1)
+
+try: # Checks folders.
 	if not os.path.exists(dataPath):
 		os.makedirs(dataPath)
 	
 	if not os.path.exists(reportsPath):
 		os.makedirs(reportsPath)
+
+	if not os.path.exists(resourcesPath):
+		raise(FileNotFoundError)
 	
 except:
-	print(Back.RED + Fore.WHITE + "DATA ERROR" + Style.RESET_ALL)
+	print(Back.RED + Fore.WHITE + "DATA OR RESOURCES ERROR" + Style.RESET_ALL)
+
+	if production:
+		print(Back.RED + Fore.WHITE + "TRY REINSTALLING OPENBRIEFCASE" + Style.RESET_ALL)
+
 	sys.exit(-1)
 
-print("openBriefcase")
+try: # Checks resources.
+	resources = [helpPath, accountHelpPath, reportTemplatePath]
+	
+	for resource in resources:
+		if not os.path.exists(resource):
+			raise(FileNotFoundError)
+
+except:
+	print(Back.RED + Fore.WHITE + "RESOURCES ERROR" + Style.RESET_ALL)
+
+	if production:
+		print(Back.RED + Fore.WHITE + "TRY REINSTALLING OPENBRIEFCASE" + Style.RESET_ALL)
+
+	sys.exit(-1)
+
+print(Fore.MAGENTA + "openBriefcase" + Style.RESET_ALL + " v" + version) if production else print("openBriefcase")
 print("Accounting utility written in Python and built with CLIbrary")
 print("Developed by Andrea Di Antonio, more on https://github.com/diantonioandrea/openBriefcase")
 print("Type \'help\' if needed")
@@ -68,7 +136,9 @@ accounts = user.accounts
 current = None
 
 while True:
-	[account.update() for account in accounts]
+	for account in accounts:
+		account.update()
+
 	accounts.sort(key = lambda entry: entry.balance, reverse=True)
 
 	fileHandler["data"] = user # type: ignore
@@ -80,7 +150,6 @@ while True:
 		cmdString += "/" + current.name
 	cmdString += "]"
 
-	cmdHandler = {}
 	cmdHandler["request"] = cmdString
 
 	# The prompt turns red should the liquidity go below zero.
@@ -89,8 +158,6 @@ while True:
 	
 	else:
 		cmdHandler["style"] = Fore.RED
-
-	cmdHandler["verboseStyle"] = Back.YELLOW
 
 	# The help that gets printed, as do the commands, depends on the environment.
 	if current == None:
@@ -102,7 +169,7 @@ while True:
 	cmdHandler["allowedCommands"] = ["new", "summary", "edit", "remove"]
 
 	if current == None:
-		cmdHandler["allowedCommands"] += ["password", "select", "delete", "report"]
+		cmdHandler["allowedCommands"] += ["password", "select", "delete", "clear", "report"]
 
 	else:
 		cmdHandler["allowedCommands"] += ["load", "dump"]
@@ -149,14 +216,14 @@ while True:
 				print(Back.RED + Fore.WHITE + "NOTHING TO SEE HERE" + Style.RESET_ALL)
 				continue
 
-			print("Accounts and latest movements for " + user.name + "\n")
+			print("Accounts and latest movements for " + user.name)
 
 			counter = 0
 
 			for account in accounts:
 				counter += 1
 
-				print(str(counter) + ". " + str(account))
+				print("\n" + str(counter) + ". " + str(account))
 				print("\t" + "\n\t".join([str(movement) for movement in account.movements[-3:]]))
 
 			print("\nTotal amount: " + openBriefcase.moneyPrint(sum([account.balance for account in accounts])))
@@ -216,12 +283,36 @@ while True:
 			print(Back.RED + Fore.WHITE + "WRONG CODE" + Style.RESET_ALL)
 			continue
 
+		if cmd == "clear": # Clears reports and dumps.
+			reports = os.listdir(reportsPath)
+			dumps = [file for file in os.listdir(dataPath) if ".obcm" in file]
+
+			if len(reports):
+				if CLIbrary.boolIn({"request": "Clear " + str(len(reports)) + " report(s)?"}):
+					for reportFile in reports:
+						os.remove(reportsPath + reportFile)
+					
+					print(cmdHandler["verboseStyle"] + "CLEARED REPORTS" + Style.RESET_ALL)
+
+			if len(dumps):
+				if CLIbrary.boolIn({"request": "Clear " + str(len(dumps)) + " dump(s)?"}):
+					for dumpFile in dumps:
+						os.remove(dataPath + dumpFile)
+					
+					print(cmdHandler["verboseStyle"] + "CLEARED DUMPS" + Style.RESET_ALL)
+
+			if not (len(reports) or len(dumps)):
+				print(Back.RED + Fore.WHITE + "NOTHING TO CLEAR" + Style.RESET_ALL)
+
+			continue
+
 		if cmd == "report": # Compiles the report for the selected time range.
-			if len(accounts) == 0 or max([len(account.movements) for account in accounts]) == 0:
+			if not len(accounts) or not max([len(account.movements) for account in accounts]):
 				print(Back.RED + Fore.WHITE + "NOTHING TO DO HERE" + Style.RESET_ALL)
 				continue
 
-			report.report(user, sdOpts, ddOpts, reportsPath, resourcesPath)
+			report.report(user, sdOpts, ddOpts, reportsPath, reportTemplatePath)
+			print(cmdHandler["verboseStyle"] + "REPORT SAVED TO \'" + reportsPath + "\'" + Style.RESET_ALL)
 			continue
 	
 	else:
@@ -298,12 +389,7 @@ while True:
 				continue
 
 			dumpCodes = [filename.replace(current.name + "_", "").replace(".obcm", "") for filename in os.listdir(dataPath) if ".obcm" in filename]
-
-			while True:
-				dumpCode = str(random.randint(10**5, 10**6-1))
-
-				if dumpCode not in dumpCodes:
-					break
+			dumpCode = openBriefcase.genCode(dumpCodes, 4)
 
 			dumpFile = current.name + "_" + dumpCode + ".obcm"
 

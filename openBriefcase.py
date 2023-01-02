@@ -38,6 +38,15 @@ def moneyPrint(amount: float) -> str:
 	else:
 		return Fore.RED + str(round(amount, 2)) + "€" + Style.RESET_ALL
 
+def genCode(otherCodes: list, length: int) -> str:
+	characters = list(range(48, 58)) + list(range(65, 91)) + list(range(97, 123))
+
+	while True:
+		code = "".join([chr(random.choice(characters)) for _ in range(length)])
+
+		if code not in otherCodes:
+			return code
+
 # Classes
 
 class user:
@@ -181,14 +190,10 @@ class movement:
 		self.amount = CLIbrary.numIn({"request": "Movement amount"})
 		self.date = CLIbrary.dateIn({"request": "Movement date"})
 
-		while True:
-			self.code = str(random.randint(10**6, 10**7-1))
-
-			if self.code not in otherCodes:
-				break
+		self.code = genCode(otherCodes, 6)
 
 		self.confirmation = CLIbrary.boolIn({"request": "Verify \"" + str(self) + "\""})
-
+	
 	def __str__(self):
 		return self.date + ", " + self.reason + ": " + moneyPrint(self.amount) + Fore.CYAN + " #" + self.code + Style.RESET_ALL
 

@@ -1,6 +1,5 @@
 from pdflatex import PDFLaTeX
-from colorama import Fore, Back, Style
-import os, sys, time
+import os, time
 
 def monthName(monthNumber: str) -> str:
 	if monthNumber == "01":
@@ -37,7 +36,7 @@ def moneyPrint(amount: float) -> str:
 	else:
 		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + "€ \\color{solarized-base02}"
 
-def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, resourcesPath: str) -> None:
+def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePath: str) -> None:
 	accounts = user.accounts
 
 	accountSummary = ["\\subsection*{User}"]
@@ -118,9 +117,10 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, resourcesPath: st
 				accountString += " \\newline\n\tIncome: " + moneyPrint(income) if income != 0 else ""
 				accountString += " \\newline\n\tExpense: " + moneyPrint(expense) if expense != 0 else ""
 			
-			accountString += "\n\\end{description} \n\n\\newpage"
-
-			accountReports.append(accountString)
+			accountString += "\n\\end{description}"
+		
+		accountString += "\n\n\\newpage"
+		accountReports.append(accountString)
 		
 	# Movements
 
@@ -174,7 +174,7 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, resourcesPath: st
 
 					for movement in dayMovements:
 						reasonString = movement.reason[0].upper() + movement.reason[1:]
-						accountString += "\n\t\t\t\\item[" + moneyPrint(movement.amount) + "] " + reasonString + " \\newline\n\t\t\t\\color{solarized-cyan} \\Hash" + movement.code + "\\color{solarized-base02}"
+						accountString += "\n\t\t\t\\item[" + moneyPrint(movement.amount) + "] " + reasonString + " \\newline\n\t\t\t\\color{solarized-cyan} \\Hash " + movement.code + "\\color{solarized-base02}"
 					
 					accountString += "\n\t\t\\end{description}"
 				
@@ -185,7 +185,7 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, resourcesPath: st
 
 		accountReports.append(accountString)
 	
-	templateFile = open(resourcesPath + "report.txt", "r")
+	templateFile = open(reportTemplatePath, "r")
 	template = templateFile.read()
 	templateFile.close()
 
@@ -212,9 +212,7 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, resourcesPath: st
 	reportTex.write(reportText)
 	reportTex.close()
 
-	for _ in range(10):
-		pdfl = PDFLaTeX.from_texfile(reportTexPath)
-		
+	pdfl = PDFLaTeX.from_texfile(reportTexPath)	
 	pdf, _, _ = pdfl.create_pdf()
 
 	reportFilePath = reportsPath + "report_" + reportTime + ".pdf"
