@@ -14,19 +14,20 @@ if "openBriefcase" not in "".join(sys.argv):
 
 if production: # Production.
 	path = os.getenv("PATH")
-	basePath = os.getenv("HOME")
+	basePath = os.getenv("HOME") + "/"
 
-	dataPath = basePath + "/Library/openBriefcase" + "/data/"
-	resourcesPath = basePath + "/Library/openBriefcase" + "/resources/"
-	reportsPath = basePath + "/Documents/Accounting/Reports/"
-	installPath = basePath + "/Documents/Accounting/"
+	installPath = basePath + "Library/openBriefcase/"
+	dataPath = installPath + "data/"
+	resourcesPath = installPath + "resources/"
+
+	reportsPath = basePath + "Documents/Accounting/Reports/"
 
 else: # Testing.
-	basePath = str(os.getcwd())
+	basePath = str(os.getcwd()) + "/"
 
-	dataPath = basePath + "/data/"
-	reportsPath = basePath + "/reports/"
-	resourcesPath = basePath + "/resources/"
+	dataPath = basePath + "data/"
+	reportsPath = basePath + "reports/"
+	resourcesPath = basePath + "resources/"
 
 helpPath = resourcesPath + "openBriefcaseHelp.json"
 accountHelpPath = resourcesPath + "openBriefcaseAccountHelp.json"
@@ -44,7 +45,7 @@ if "install" in sys.argv and production:
 
 		shutil.copy(currentPath + "openBriefcase", installPath + "openBriefcase")
 
-		if installPath not in path:
+		if installPath not in path and installPath.replace("openBriefcase/", "openBriefcase") not in path:
 			CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH"})
 		
 		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY"})
