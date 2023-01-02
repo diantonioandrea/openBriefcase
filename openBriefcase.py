@@ -131,7 +131,7 @@ class account:
 						counter += 1
 						print("\t\t" + str(counter) + ". " + str(movement))
 		else:
-			print("\n" + Back.RED + "NO MOVEMENTS" + Style.RESET_ALL)
+			CLIbrary.output({"error": True, "string": "NO MOVEMENTS"})
 
 		print("\nOpened with " + moneyPrint(self.start))
 		print("Balance: " + moneyPrint(self.balance))
@@ -141,16 +141,16 @@ class account:
 
 		try:
 			if not bcrypt.checkpw("".join([movement.dump() for movement in loadData["movements"]]).encode(), loadData["hash"]):
-				print(Back.RED + Fore.WHITE + "CORRUPTED DATA" + Style.RESET_ALL)
+				CLIbrary.output({"error": True, "string": "CORRUPTED DATA"})
 				return None
 		
 		except:
-			print(Back.RED + Fore.WHITE + "DATA ERROR" + Style.RESET_ALL)
+			CLIbrary.output({"error": True, "string": "DATA ERROR"})
 
 		newMovements = [movement for movement in loadData["movements"] if movement.code not in [movement.code for movement in self.movements]]
 
 		if len(newMovements) == 0:
-			print(Back.RED + Fore.WHITE + "NO LOADABLE MOVEMENTS FOUND" + Style.RESET_ALL)
+			CLIbrary.output({"error": True, "string": "NO LOADABLE MOVEMENTS FOUND"})
 			return None
 
 		if CLIbrary.boolIn({"request": "Found " + str(len(newMovements)) + " loadable movement(s): \n\n" + "\n".join([str(movement) for movement in newMovements]) + "\n\nLoad the found movement(s)?"}):
