@@ -1,7 +1,7 @@
 import CLIbrary, openBriefcase, report
 
 import os, sys, time, random, shutil
-from colorama import init, Fore, Back, Style
+from colorama import init, Fore, Style
 init()
 
 version = "1.0.0"
