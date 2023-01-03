@@ -18,9 +18,13 @@ and can be installed by:
 	
 ### Windows
 
-**openBriefcase** can be installed by:
+**openBriefcase** can be compiled by:
 
-	./openBriefcase.exe install
+	nmake windows
+
+and can be installed by:
+
+	.\openBriefcase.exe install
 
 ## Commands
 
