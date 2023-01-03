@@ -225,7 +225,7 @@ while True:
 							CLIbrary.output({"erorr": True, "string": "UPDATE IGNORED"})
 
 					elif version > latestVersion:
-						CLIbrary.output({"verbose": True, "string": "YOU'RE ON AN UNRELEASED VERSION"})
+						CLIbrary.output({"verbose": True, "string": "YOU'RE ON A NEWER VERSION THAN THE LATEST RELEASE"})
 
 				except:
 					CLIbrary.output({"error": True, "string": "UPDATE SYSTEM ERROR"})
