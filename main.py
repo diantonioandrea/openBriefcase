@@ -202,7 +202,7 @@ while True:
 		if len(accounts):
 			cmdHandler["allowedCommands"] += ["select", "summary"]
 
-			if not max([len(account.movements) for account in accounts]):
+			if max([len(account.movements) for account in accounts]):
 				cmdHandler["allowedCommands"].append("report")
 
 	else:
