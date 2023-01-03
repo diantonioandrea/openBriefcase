@@ -18,11 +18,7 @@ and it can be installed by:
 	
 ### Windows
 
-**openBriefcase** can be compiled by:
-
-	make windows
-
-and it can be installed by:
+**openBriefcase** can be installed by:
 
 	./openBriefcase.exe install
 
