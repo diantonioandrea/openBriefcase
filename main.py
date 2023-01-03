@@ -1,6 +1,6 @@
 import CLIbrary, openBriefcase, report
 
-import os, sys, time, random, shutil, requests
+import os, sys, time, random, shutil, requests, platform
 from colorama import init, Fore, Back, Style
 init()
 
@@ -18,10 +18,20 @@ print("Accounting utility written in Python and built with CLIbrary")
 print("Developed by " + Style.BRIGHT + Fore.MAGENTA + "Andrea Di Antonio" + Style.RESET_ALL + ", more on https://github.com/diantonioandrea/openBriefcase")
 
 if production: # Production.
-	path = os.getenv("PATH")
-	basePath = os.getenv("HOME") + "/"
+	system = platform.system()
+	basePath = os.path.expanduser("~") + "/"
 
-	installPath = basePath + "Library/openBriefcase/"
+	if system == "Darwin":
+		installPath = basePath + "Library/openBriefcase/"
+	
+	elif system == "Linux":
+		installPath = basePath + ".local/bin/openBriefcase/"
+
+	elif system == "Windows":
+		installPath = basePath + "AppData/Roaming/openBriefcase/"
+
+	path = os.getenv("PATH")
+
 	dataPath = installPath + "data/"
 	resourcesPath = installPath + "resources/"
 
