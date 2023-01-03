@@ -49,7 +49,7 @@ accountHelpPath = resourcesPath + "openBriefcaseAccountHelp.json"
 reportTemplatePath = resourcesPath + "report.txt"
 
 # Installation
-if "install" in sys.argv and "./" in "".join(sys.argv) and production:
+if "install" in sys.argv and production:
 	try:
 		currentPath = os.getcwd() + "/"
 		
@@ -59,7 +59,11 @@ if "install" in sys.argv and "./" in "".join(sys.argv) and production:
 		for file in os.listdir(currentPath + "resources/"):
 			shutil.copy(currentPath + "resources/" + file, resourcesPath + file)
 
-		shutil.copy(currentPath + "openBriefcase", installPath + "openBriefcase")
+		if system != "Windows":
+			shutil.copy(currentPath + "openBriefcase", installPath + "openBriefcase")
+
+		else:
+			shutil.copy(currentPath + "openBriefcase.exe", installPath + "openBriefcase.exe")
 
 		if installPath.replace("openBriefcase/", "openBriefcase") not in path.replace("openBriefcase/", "openBriefcase"):
 			CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
@@ -284,6 +288,9 @@ while True:
 
 			if CLIbrary.boolIn({"request": "Verify \"" + str(newAccount) + "\""}):
 				accounts.append(newAccount)
+			
+			CLIbrary.output({"verbose": True, "string": "NEW ACCOUNT CREATED"})
+			continue
 
 		# SUMMARY
 
