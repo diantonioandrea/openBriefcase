@@ -102,10 +102,10 @@ class account:
 		self.update()
 
 	def summary(self):
-		print("Summary for: " + self.name)
+		print("Summary for: " + self.name + "\n")
 
 		if len(self.movements) != 0:
-			print("\nAccount movements [DATE, REASON: AMOUNT #CODE]: ")
+			print("Account movements [DATE, REASON: AMOUNT #CODE]: ")
 
 			years = set([movement.date.split("-")[0] for movement in self.movements])
 			years = list(years)

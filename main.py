@@ -4,7 +4,7 @@ import os, sys, time, random, shutil, requests
 from colorama import init, Fore, Back, Style
 init()
 
-version = "v1.0.1"
+version = "v1.0.2_dev"
 production = True
 
 cmdHandler = {}
@@ -51,10 +51,10 @@ if "install" in sys.argv and "./" in "".join(sys.argv) and production:
 
 		shutil.copy(currentPath + "openBriefcase", installPath + "openBriefcase")
 
-		if installPath not in path and installPath.replace("openBriefcase/", "openBriefcase") not in path:
+		if installPath.replace("openBriefcase/", "openBriefcase") not in path.replace("openBriefcase/", "openBriefcase"):
 			CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
 		
-		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY", "before": "\n", "after": "\n"})
+		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "before": "\n", "after": "\n"})
 		sys.exit(0)
 	
 	except(KeyboardInterrupt):
@@ -174,13 +174,22 @@ while True:
 	else:
 		cmdHandler["style"] = Fore.RED
 
-	cmdHandler["allowedCommands"] = ["new", "summary", "edit", "remove"]
+	cmdHandler["allowedCommands"] = ["new"]
 
 	if current == None:
-		cmdHandler["allowedCommands"] += ["update", "password", "select", "delete", "clear", "report"]
+		cmdHandler["allowedCommands"] += ["update", "password", "clear", "delete"]
+
+		if len(accounts):
+			cmdHandler["allowedCommands"] += ["select", "summary"]
+
+			if not max([len(account.movements) for account in accounts]):
+				cmdHandler["allowedCommands"].append("report")
 
 	else:
-		cmdHandler["allowedCommands"] += ["load", "dump"]
+		cmdHandler["allowedCommands"] += ["summary", "load"]
+
+		if len(current.movements):
+			cmdHandler["allowedCommands"] += ["summary", "dump", "edit", "remove"]
 
 	command = CLIbrary.cmdIn(cmdHandler)
 
@@ -189,15 +198,22 @@ while True:
 	ddOpts = command["ddOpts"]
 	output = command["output"]
 
+	# COMMANDS
+
 	if cmd == "help": # Prints the help.
 		print(output)
 		continue
 
 	if current == None:
+
+		# EXIT
+
 		if cmd == "exit": # Exits the program.
 			break
 
-		if cmd == "update": # Checks for updates
+		# UPDATE
+
+		elif cmd == "update": # Checks for updates
 			if production:
 				try:
 					latestVersion = requests.get("https://github.com/diantonioandrea/openBriefcase/releases/latest").url.split("/")[-1]
@@ -233,7 +249,9 @@ while True:
 			else:
 				CLIbrary.output({"error": True, "string": "MUST BE ON PRODUCTION"})
 
-		if cmd == "password": # Toggles the password protection.
+		# PASSWORD
+
+		elif cmd == "password": # Toggles the password protection.
 			if user.protected:
 				if user.login(user.passwordHash):
 					CLIbrary.output({"verbose": True, "string": "PASSWORD DISABLED"})
@@ -249,74 +267,25 @@ while True:
 			CLIbrary.output({"verbose": True, "string": "PASSWORD SET"})
 			continue
 
-		if cmd == "new": # Creates a new account.
+		# NEW
+
+		elif cmd == "new": # Creates a new account.
 			newAccount = openBriefcase.account([account.name for account in accounts])
 
 			if CLIbrary.boolIn({"request": "Verify \"" + str(newAccount) + "\""}):
 				accounts.append(newAccount)
 
-		if cmd == "summary": # Prints the accounts summary including the latest movements.
-			if len(accounts) == 0:
-				CLIbrary.output({"error": True, "string": "NOTHING TO SEE HERE"})
-				continue
+		# SUMMARY
 
+		elif cmd == "summary": # Prints the accounts summary including the latest three movements.
 			print("Accounts and latest movements for " + user.name)
-
-			counter = 0
-
-			for account in accounts:
-				counter += 1
-
-				print("\n" + str(counter) + ". " + str(account))
-				print("\t" + "\n\t".join([str(movement) for movement in account.movements[-3:]]))
-
+			print("\n".join(["\n" + str(accounts.index(account) + 1) + ". " + str(account) + ("\n\t" + "\n\t".join([str(movement) for movement in account.movements[-3:]]) if len(account.movements) else "") for account in accounts]))
 			print("\nTotal amount: " + openBriefcase.moneyPrint(sum([account.balance for account in accounts])))
+			continue
 
-		if cmd == "select": # Swaps the base environment with the selected account enviroment.
-			if "n" not in sdOpts:
-				CLIbrary.output({"error": True, "string": "MISSING OPTION"})
-				continue
-
-			try:
-				current = [account for account in accounts if account.name == sdOpts["n"]].pop()
-
-			except:
-				CLIbrary.output({"error": True, "string": "ACCOUNT NOT FOUND"})
-				current = None
-
-		if cmd == "edit": # Edits an account name.
-			if "n" not in sdOpts:
-				CLIbrary.output({"error": True, "string": "MISSING OPTION(S)"})
-				continue
-
-			try:
-				editedAccount = [account for account in accounts if account.name == sdOpts["n"]].pop()
-				editedAccount.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": [account.name for account in accounts]})
-				editedAccount.lastModified = time.localtime()
-
-				CLIbrary.output({"verbose": True, "string": "ACCOUNT NAME EDITED"})
-				continue
-
-			except:
-				CLIbrary.output({"error": True, "string": "ACCOUNT NOT FOUND"})
-				continue
-
-		if cmd == "remove": # Removes an account.
-			if "n" not in sdOpts:
-				CLIbrary.output({"error": True, "string": "MISSING OPTION"})
-				continue
-
-			try:
-				accounts.remove([account for account in accounts if account.name == sdOpts["n"]].pop())
-
-				CLIbrary.output({"verbose": True, "string": "ACCOUNT REMOVED"})
-				continue
-
-			except:
-				CLIbrary.output({"error": True, "string": "ACCOUNT NOT FOUND"})
-				continue
+		# DELETE
 		
-		if cmd == "delete": # Deletes the profile.
+		elif cmd == "delete": # Deletes the profile.
 			deletionCode = str(random.randint(10**3, 10**4-1))
 
 			if CLIbrary.strIn({"request": "Given that this action is irreversible, insert \"" + deletionCode + "\" to delete your profile"}) == deletionCode:
@@ -328,7 +297,9 @@ while True:
 			CLIbrary.output({"error": True, "string": "WRONG VERIFICATION CODE"})
 			continue
 
-		if cmd == "clear": # Clears reports and dumps.
+		# CLEAR
+
+		elif cmd == "clear": # Clears reports and dumps.
 			reports = os.listdir(reportsPath)
 			dumps = [file for file in os.listdir(dataPath) if ".obcm" in file]
 
@@ -351,70 +322,69 @@ while True:
 
 			continue
 
-		if cmd == "report": # Compiles the report for the selected time range.
-			if not len(accounts) or not max([len(account.movements) for account in accounts]):
-				CLIbrary.output({"error": True, "string": "NOTHING TO DO HERE"})
-				continue
+		# REPORT
 
+		elif cmd == "report": # Compiles the report for the selected time range.
 			report.report(user, sdOpts, ddOpts, reportsPath, reportTemplatePath)
 			CLIbrary.output({"verbose": True, "string": "REPORT SAVED TO \'" + reportsPath + "\'"})
 			continue
+
+		# COMMANDS THAT NEED AN ACCOUNT NAME
+
+		if "n" not in sdOpts:
+			CLIbrary.output({"error": True, "string": "MISSING OPTION"})
+			continue
+
+		else:
+			try:
+				targetAccount = [account for account in accounts if account.name == sdOpts["n"]].pop()
+
+			except:
+				CLIbrary.output({"error": True, "string": "ACCOUNT NOT FOUND"})
+				continue
+
+			# SELECT
+
+			if cmd == "select": # Swaps the base environment with the selected account enviroment.
+				current = targetAccount
+
+			# EDIT
+
+			elif cmd == "edit": # Edits an account name.
+				targetAccount.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": [account.name for account in accounts]})
+				targetAccount.lastModified = time.localtime()
+				continue
+
+			# REMOVE
+
+			elif cmd == "remove": # Removes an account.
+				accounts.remove(targetAccount)
+				CLIbrary.output({"verbose": True, "string": "ACCOUNT REMOVED"})
+				continue
 	
 	else:
+
+		# EXIT
+
 		if cmd == "exit": # Exits the account enviroment.
 			current = None
 			continue
 
-		if cmd == "new": # Creates a new movement.
+		# NEW
+
+		elif cmd == "new": # Creates a new movement.
 			current.addMovement()
 			continue
 
-		if cmd == "summary": # Prints the summary for the current account.
+		# SUMMARY
+
+		elif cmd == "summary": # Prints the summary for the current account.
 			current.summary()
 			continue
 
-		if cmd == "edit": # Edits a movement.
-			if "c" not in sdOpts or set(ddOpts).intersection({"reason", "amount", "date"}) == set():
-				CLIbrary.output({"error": True, "string": "MISSING OPTION(S)"})
-				continue
-
-			try:
-				editedMovement = [movement for movement in current.movements if movement.code == sdOpts["c"]].pop()
-
-				if "reason" in ddOpts:
-					editedMovement.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
-				
-				if "amount" in ddOpts:
-					editedMovement.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})
-				
-				if "date" in ddOpts:
-					editedMovement.date = CLIbrary.dateIn({"request": "Movement date"})
-
-				editedMovement.lastModified = time.localtime()
-
-				CLIbrary.output({"verbose": True, "string": "MOVEMENT EDITED"})
-				continue
-
-			except:
-				CLIbrary.output({"error": True, "string": "MOVEMENT NOT FOUND"})
-				continue
-
-		if cmd == "remove": # Removes a movement.
-			if "c" not in sdOpts:
-				CLIbrary.output({"error": True, "string": "MISSING OPTION"})
-				continue
-
-			try:
-				current.movements.remove([movement for movement in current.movements if movement.code == sdOpts["c"]].pop())
-
-				CLIbrary.output({"verbose": True, "string": "MOVEMENT REMOVED"})
-				continue
-
-			except:
-				CLIbrary.output({"error": True, "string": "MOVEMENT NOT FOUND"})
-				continue
+		# LOAD
 		
-		if cmd == "load": # Loads movements from a ".obcm" file.
+		elif cmd == "load": # Loads movements from a ".obcm" file.
 			oldMovements = len(current.movements)
 			loadFiles = [filename for filename in os.listdir(dataPath) if ".obcm" in filename]
 
@@ -427,20 +397,63 @@ while True:
 
 			CLIbrary.output({"verbose": True, "string": "LOADED " + str(len(current.movements) - oldMovements) + " MOVEMENTS FROM " + loadFile})
 			continue
-	
-		if cmd == "dump": # Dumps movements to a ".obcm" file.
-			if len(current.movements) == 0:
-				CLIbrary.output({"error": True, "string": "NOTHING TO DO HERE"})
-				continue
 
-			dumpCodes = [filename.replace(current.name + "_", "").replace(".obcm", "") for filename in os.listdir(dataPath) if ".obcm" in filename]
-			dumpCode = openBriefcase.genCode(dumpCodes, 4)
+		# COMMANDS THAT NEED AT LEAST ONE MOVEMENT
 
-			dumpFile = current.name + "_" + dumpCode + ".obcm"
-
-			current.dump({"path": dataPath + dumpFile}, sdOpts)
-
-			CLIbrary.output({"verbose": True, "string": "DUMPED TO " + dumpFile})
+		if len(current.movements) == 0:
+			CLIbrary.output({"error": True, "string": "NO MOVEMENTS"})
 			continue
+
+		else:
+
+			# EDIT OR REMOVE
+
+			if cmd in ["edit", "remove"]: # Edits or removes a movement.
+				if "c" not in sdOpts:
+					CLIbrary.output({"error": True, "string": "MISSING OPTION(S)"})
+					continue
+
+				try:
+					targetMovement = [movement for movement in current.movements if movement.code == sdOpts["c"]].pop()
+
+					if cmd == "edit":
+						if set(ddOpts).intersection({"reason", "amount", "date"}) == set():
+							CLIbrary.output({"error": True, "string": "NOTHING TO DO HERE"})
+							continue
+						
+						if "reason" in ddOpts:
+							targetMovement.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
+						
+						if "amount" in ddOpts:
+							targetMovement.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})
+						
+						if "date" in ddOpts:
+							targetMovement.date = CLIbrary.dateIn({"request": "Movement date"})
+
+						targetMovement.lastModified = time.localtime()
+
+						CLIbrary.output({"verbose": True, "string": "MOVEMENT EDITED"})
+						continue
+					
+					if cmd == "remove":
+						current.movements.remove(targetMovement)
+
+						CLIbrary.output({"verbose": True, "string": "MOVEMENT REMOVED"})
+						continue
+
+				except:
+					CLIbrary.output({"error": True, "string": "MOVEMENT NOT FOUND"})
+					continue
+			
+			# DUMP
+	
+			elif cmd == "dump": # Dumps movements to a ".obcm" file.
+				dumpCodes = [filename.replace(current.name + "_", "").replace(".obcm", "") for filename in os.listdir(dataPath) if ".obcm" in filename]
+				dumpFile = current.name + "_" + openBriefcase.genCode(dumpCodes, 4) + ".obcm"
+
+				current.dump({"path": dataPath + dumpFile}, sdOpts)
+
+				CLIbrary.output({"verbose": True, "string": "DUMPED TO " + dumpFile})
+				continue
 
 print("\nGoodbye, " + str(user) + "\n")
