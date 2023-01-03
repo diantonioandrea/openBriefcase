@@ -3,16 +3,19 @@
 data
 reports
 
-# MAKE COMPILE
+# MAKE COMPILE AND WINDOWS
 
 build
 dist
 *.spec
-openBriefcase
 release
+
+openBriefcase
+openBriefcase.exe
 
 # OTHERS
 
 .vscode
-.DS_Store
+
+**/__pycache__
 **/.DS_Store
