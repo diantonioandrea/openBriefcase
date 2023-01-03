@@ -1,6 +1,10 @@
-compile:
+compile: # Linux and macOS compile
 	pyinstaller --onefile --console main.py
 	mv dist/main openBriefcase
+
+windows: # Windows compile
+	pyinstaller --onefile --console main.py
+	move .\dist\main.exe .\openBriefcase.exe
 
 # Linux and macOS only
 
