@@ -240,6 +240,7 @@ while True:
 
 					if version == latestVersion:
 						CLIbrary.output({"verbose": True, "string": "YOU'RE ON THE LATEST VERSION"})
+						continue
 
 					elif  version < latestVersion:
 						CLIbrary.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion})
@@ -259,15 +260,20 @@ while True:
 						
 						else:
 							CLIbrary.output({"erorr": True, "string": "UPDATE IGNORED"})
+						
+						continue
 
 					elif version > latestVersion:
 						CLIbrary.output({"verbose": True, "string": "YOU'RE ON A NEWER VERSION THAN THE LATEST RELEASE"})
+						continue
 
 				except:
 					CLIbrary.output({"error": True, "string": "UPDATE SYSTEM ERROR"})
+					continue
 			
 			else:
 				CLIbrary.output({"error": True, "string": "MUST BE ON PRODUCTION"})
+				continue
 
 		# PASSWORD
 
@@ -370,6 +376,7 @@ while True:
 
 			if cmd == "select": # Swaps the base environment with the selected account enviroment.
 				current = targetAccount
+				continue
 
 			# EDIT
 
