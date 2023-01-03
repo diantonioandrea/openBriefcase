@@ -12,7 +12,7 @@ Accounting utility written in Python and built with [CLIbrary](https://github.co
 
 	make compile
 
-and it can be installed by:
+and can be installed by:
 
 	./openBriefcase install
 	

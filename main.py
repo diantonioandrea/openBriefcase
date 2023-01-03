@@ -4,7 +4,7 @@ import os, sys, time, random, shutil, requests, platform
 from colorama import init, Fore, Back, Style
 init()
 
-version = "v1.0.2_dev"
+version = "v1.0.2"
 production = True
 
 cmdHandler = {}
@@ -250,7 +250,7 @@ while True:
 								os.makedirs(basePath + "Downloads/")
 
 							filePath = basePath + "Downloads/openBriefcase.zip"
-							url = "https://github.com/diantonioandrea/openBriefcase/releases/download/" + latestVersion + "/openBriefcase.zip"
+							url = "https://github.com/diantonioandrea/openBriefcase/releases/download/" + latestVersion + "/openBriefcase-SYSTEM.zip".replace("SYSTEM", system.lower())
 
 							file = open(filePath, "wb")
 							file.write(requests.get(url).content)
