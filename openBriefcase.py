@@ -62,7 +62,7 @@ class user:
 		self.accounts = []
 	
 	def __str__(self):
-		return self.name[0].upper() + self.name[1:]
+		return self.name
 
 	def login(self, passwordHash):
 		password = CLIbrary.strIn({"request": "Password", "noSpace": True, "fixedLength": 8})
