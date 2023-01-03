@@ -4,13 +4,18 @@ import os, sys, time, random, shutil, requests
 from colorama import init, Fore, Back, Style
 init()
 
-version = "v1.0.0"
+version = "v1.0.1"
 production = True
 
 cmdHandler = {}
 
 if "openBriefcase" not in "".join(sys.argv):
 	production = False
+
+print("\n" + Back.MAGENTA + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL) if production else print("\n" + Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL)
+
+print("Accounting utility written in Python and built with CLIbrary")
+print("Developed by " + Style.BRIGHT + Fore.MAGENTA + "Andrea Di Antonio" + Style.RESET_ALL + ", more on https://github.com/diantonioandrea/openBriefcase")
 
 if production: # Production.
 	path = os.getenv("PATH")
@@ -49,11 +54,11 @@ if "install" in sys.argv and "./" in "".join(sys.argv) and production:
 		if installPath not in path and installPath.replace("openBriefcase/", "openBriefcase") not in path:
 			CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
 		
-		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY"})
+		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY", "before": "\n", "after": "\n"})
 		sys.exit(0)
 	
 	except(KeyboardInterrupt):
-		CLIbrary.output({"error": True, "string": "INSTALLATION ERROR"})
+		CLIbrary.output({"error": True, "string": "INSTALLATION ERROR", "before": "\n", "after": "\n"})
 		sys.exit(-1)
 
 try: # Checks folders.
@@ -67,10 +72,13 @@ try: # Checks folders.
 		raise(FileNotFoundError)
 	
 except:
-	CLIbrary.output({"error": True, "string": "DATA OR RESOURCES ERROR"})
+	CLIbrary.output({"error": True, "string": "DATA OR RESOURCES ERROR", "before": "\n"})
 
 	if production:
-		CLIbrary.output({"verbose": True, "string": "TRY REINSTALLING OPENBRIEFCASE"})
+		CLIbrary.output({"verbose": True, "string": "TRY REINSTALLING OPENBRIEFCASE", "after": "\n"})
+	
+	else:
+		print() # Empty line on exit.
 
 	sys.exit(-1)
 
@@ -82,18 +90,15 @@ try: # Checks resources.
 			raise(FileNotFoundError)
 
 except:
-	CLIbrary.output({"error": True, "string": "RESOURCES ERROR"})
+	CLIbrary.output({"error": True, "string": "RESOURCES ERROR", "before": "\n"})
 
 	if production:
-		CLIbrary.output({"verbose": True, "string": "TRY REINSTALLING OPENBRIEFCASE"})
+		CLIbrary.output({"verbose": True, "string": "TRY REINSTALLING OPENBRIEFCASE", "after": "\n"})
+	
+	else:
+		print() # Empty line on exit.
 
 	sys.exit(-1)
-
-print(Back.MAGENTA + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL) if production else print(Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL)
-
-print("Accounting utility written in Python and built with CLIbrary")
-print("Developed by " + Style.BRIGHT + Fore.MAGENTA + "Andrea Di Antonio" + Style.RESET_ALL + ", more on https://github.com/diantonioandrea/openBriefcase")
-print("Type \'help\' if needed")
 
 # Login or register
 while True:
@@ -111,6 +116,7 @@ while True:
 				CLIbrary.output({"error": True, "string": "LOGIN ERROR"})
 
 				if CLIbrary.boolIn({"request": "Exit"}):
+					print() # Empty line on exit.
 					sys.exit(-1)
 				else:
 					continue
@@ -118,35 +124,20 @@ while True:
 		user.accounts = userData.accounts
 		user.registrationDate = userData.registrationDate
 
-		print("\nWelcome back, " + str(user))
-		print("Last login: " + time.strftime("%A, %B %d, %Y at %H:%M", userData.lastLogin) + "\n")
+		print("\nWelcome back, " + str(user) + "\nLast login: " + time.strftime("%A, %B %d, %Y at %H:%M", userData.lastLogin))
 		break
 
 	else:
 		if not CLIbrary.boolIn({"request": "User \"" + user.name + "\" does not exist. Would you like to create it?"}):
 			if CLIbrary.boolIn({"request": "Exit"}):
+				print() # Empty line on exit.
 				sys.exit(-1)
 			continue
 
-		print("\nWelcome, " + str(user) + "\n")
+		print("\nWelcome, " + str(user))
 		break
 
-# Check for updates
-if production:
-	try:
-		latestVersion = requests.get("https://github.com/diantonioandrea/openBriefcase/releases/latest").url.split("/")[-1]
-
-		if version == latestVersion:
-			CLIbrary.output({"verbose": True, "string": "YOU'RE ON THE LATEST VERSION", "after": "\n"})
-
-		elif  version < latestVersion:
-			CLIbrary.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion, "after": "\n"})
-
-		elif  version > latestVersion:
-			CLIbrary.output({"verbose": True, "string": "YOU'RE ON AN UNRELEASED VERSION", "after": "\n"})
-
-	except:
-		CLIbrary.output({"error": True, "string": "COULD NOT CHECK FOR UPDATES", "after": "\n"})
+print("Type \'help\' if needed\n")
 
 # Interface
 accounts = user.accounts
@@ -186,7 +177,7 @@ while True:
 	cmdHandler["allowedCommands"] = ["new", "summary", "edit", "remove"]
 
 	if current == None:
-		cmdHandler["allowedCommands"] += ["password", "select", "delete", "clear", "report"]
+		cmdHandler["allowedCommands"] += ["update", "password", "select", "delete", "clear", "report"]
 
 	else:
 		cmdHandler["allowedCommands"] += ["load", "dump"]
@@ -205,6 +196,42 @@ while True:
 	if current == None:
 		if cmd == "exit": # Exits the program.
 			break
+
+		if cmd == "update": # Checks for updates
+			if production:
+				try:
+					latestVersion = requests.get("https://github.com/diantonioandrea/openBriefcase/releases/latest").url.split("/")[-1]
+
+					if version == latestVersion:
+						CLIbrary.output({"verbose": True, "string": "YOU'RE ON THE LATEST VERSION"})
+
+					elif  version < latestVersion:
+						CLIbrary.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion})
+
+						if CLIbrary.boolIn({"request": "Would you like to download the latest version?"}):
+							if not os.path.exists(basePath + "Downloads/"):
+								os.makedirs(basePath + "Downloads/")
+
+							filePath = basePath + "Downloads/openBriefcase.zip"
+							url = "https://github.com/diantonioandrea/openBriefcase/releases/download/" + latestVersion + "/openBriefcase.zip"
+
+							file = open(filePath, "wb")
+							file.write(requests.get(url).content)
+							file.close()
+
+							CLIbrary.output({"verbose": True, "string": "SAVED TO: " + filePath})
+						
+						else:
+							CLIbrary.output({"erorr": True, "string": "UPDATE IGNORED"})
+
+					elif version > latestVersion:
+						CLIbrary.output({"verbose": True, "string": "YOU'RE ON AN UNRELEASED VERSION"})
+
+				except:
+					CLIbrary.output({"error": True, "string": "UPDATE SYSTEM ERROR"})
+			
+			else:
+				CLIbrary.output({"error": True, "string": "MUST BE ON PRODUCTION"})
 
 		if cmd == "password": # Toggles the password protection.
 			if user.protected:
@@ -416,4 +443,4 @@ while True:
 			CLIbrary.output({"verbose": True, "string": "DUMPED TO " + dumpFile})
 			continue
 
-print("\nGoodbye, " + str(user))
+print("\nGoodbye, " + str(user) + "\n")

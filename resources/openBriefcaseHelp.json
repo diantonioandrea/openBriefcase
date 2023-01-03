@@ -1,6 +1,9 @@
 {
 	"exit": {
 		"description": "Exits the program."
+	},
+	"update": {
+		"description": "Checks for updates."
 	}, 
 	"password": {
 		"description": "Lets the user pick a password to protect its account or disable it."
@@ -24,7 +27,7 @@
 		"description": "Prints a summary of the accounts."
 	},
 	"report": {
-		"description": "compile a report of all the account in the specified time range, if present. Make sure to have at least a registered movement.",
+		"description": "Compiles a report of all the account in the specified time range, if present. Make sure to have at least a registered movement.",
 		"options": "-s STARTING_TIME, -e ENDING_TIME"
 	}
 }
