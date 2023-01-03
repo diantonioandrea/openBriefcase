@@ -29,6 +29,7 @@ if production: # Production.
 
 	elif system == "Windows":
 		installPath = basePath + "AppData/Roaming/openBriefcase/"
+		installPath.replace("/", "\\")
 
 	path = os.getenv("PATH")
 
@@ -50,6 +51,8 @@ reportTemplatePath = resourcesPath + "report.txt"
 
 # Installation
 if "install" in sys.argv and production:
+	print() # Empty line needed.
+
 	try:
 		currentPath = os.getcwd() + "/"
 		
@@ -62,13 +65,16 @@ if "install" in sys.argv and production:
 		if system != "Windows":
 			shutil.copy(currentPath + "openBriefcase", installPath + "openBriefcase")
 
+			if "openBriefcase" not in path:
+				CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
+
 		else:
 			shutil.copy(currentPath + "openBriefcase.exe", installPath + "openBriefcase.exe")
 
-		if installPath.replace("openBriefcase/", "openBriefcase") not in path.replace("openBriefcase/", "openBriefcase"):
-			CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
+			if "openBriefcase" not in path:
+				CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
 		
-		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "before": "\n", "after": "\n"})
+		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "after": "\n"})
 		sys.exit(0)
 	
 	except(KeyboardInterrupt):
