@@ -31,10 +31,10 @@ def monthName(monthNumber: str) -> str:
 
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
-		return "\\color{solarized-green} \\Plus" + str(round(amount, 2)) + "€ \\color{solarized-base02}"
+		return "\\color{solarized-green} \\Plus" + str(round(amount, 2)) + " \\color{solarized-base02}"
 
 	else:
-		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + "€ \\color{solarized-base02}"
+		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + " \\color{solarized-base02}"
 
 def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePath: str) -> None:
 	accounts = user.accounts

@@ -33,10 +33,10 @@ def monthName(monthNumber: str) -> str:
 
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
-		return Fore.GREEN + "+" + str(round(amount, 2)) + "€" + Style.RESET_ALL
+		return Fore.GREEN + "+" + str(round(amount, 2)) + "" + Style.RESET_ALL
 
 	else:
-		return Fore.RED + str(round(amount, 2)) + "€" + Style.RESET_ALL
+		return Fore.RED + str(round(amount, 2)) + "" + Style.RESET_ALL
 
 def genCode(otherCodes: list, length: int) -> str:
 	characters = list(range(48, 58)) + list(range(97, 123))
