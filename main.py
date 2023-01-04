@@ -72,11 +72,13 @@ if "install" in sys.argv and production:
 				CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
 		
 		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "after": "\n"})
-		sys.exit(0)
 	
 	except:
 		CLIbrary.output({"error": True, "string": "INSTALLATION ERROR", "before": "\n", "after": "\n"})
 		sys.exit(-1)
+
+	finally:
+		sys.exit(0)
 
 try: # Checks folders.
 	if not os.path.exists(dataPath):
