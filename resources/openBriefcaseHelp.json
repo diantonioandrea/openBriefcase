@@ -23,6 +23,9 @@
 		"description": "Removes an account.",
 		"mandatoryOptions": "-n ACCOUNT_NAME"
 	},
+	"delete": {
+		"description": "Deletes the user's profile."
+	},
 	"summary": {
 		"description": "Prints a summary of the accounts."
 	},

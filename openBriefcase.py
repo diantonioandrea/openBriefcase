@@ -98,7 +98,8 @@ class account:
 
 		if newMovement.confirmation:
 			self.movements.append(newMovement)
-
+			CLIbrary.output({"verbose": True, "string": "MOVEMENT ADDED"})
+		
 		self.update()
 
 	def summary(self):
@@ -140,14 +141,14 @@ class account:
 		loadData = CLIbrary.aLoad(fileHandler)
 
 		try:
-			if not bcrypt.checkpw("".join([movement.dump() for movement in loadData["movements"]]).encode(), loadData["hash"]):
+			if not bcrypt.checkpw("".join([movement.dump() for movement in loadData["movements"]]).encode(), loadData["hash"]): # type: ignore
 				CLIbrary.output({"error": True, "string": "CORRUPTED DATA"})
 				return None
 		
 		except:
 			CLIbrary.output({"error": True, "string": "DATA ERROR"})
 
-		newMovements = [movement for movement in loadData["movements"] if movement.code not in [movement.code for movement in self.movements]]
+		newMovements = [movement for movement in loadData["movements"] if movement.code not in [movement.code for movement in self.movements]] # type: ignore
 
 		if len(newMovements) == 0:
 			CLIbrary.output({"error": True, "string": "NO LOADABLE MOVEMENTS FOUND"})

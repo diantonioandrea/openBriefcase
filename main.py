@@ -4,10 +4,11 @@ import os, sys, time, random, shutil, requests, platform
 from colorama import init, Fore, Back, Style
 init()
 
-version = "v1.0.2"
+version = "v1.1.0_dev"
 production = True
 
-cmdHandler = {}
+system = platform.system()
+path = os.getenv("PATH")
 
 if "openBriefcase" not in "".join(sys.argv):
 	production = False
@@ -18,32 +19,29 @@ print("Accounting utility written in Python and built with CLIbrary")
 print("Developed by " + Style.BRIGHT + Fore.MAGENTA + "Andrea Di Antonio" + Style.RESET_ALL + ", more on https://github.com/diantonioandrea/openBriefcase")
 
 if production: # Production.
-	system = platform.system()
-	basePath = os.path.expanduser("~") + "/"
-
-	if system == "Darwin":
-		installPath = basePath + "Library/openBriefcase/"
+	installPath = os.path.expanduser("~") + "/"
 	
-	elif system == "Linux":
-		installPath = basePath + ".local/bin/openBriefcase/"
-
-	elif system == "Windows":
-		installPath = basePath + "AppData/Roaming/openBriefcase/"
-		installPath.replace("/", "\\")
-
-	path = os.getenv("PATH")
+	reportsPath = installPath + "Documents/Accounting/Reports/"
 
 	dataPath = installPath + "data/"
 	resourcesPath = installPath + "resources/"
 
-	reportsPath = basePath + "Documents/Accounting/Reports/"
+	if system == "Darwin":
+		installPath += "Library/openBriefcase/"
+	
+	elif system == "Linux":
+		installPath += ".local/bin/openBriefcase/"
+
+	elif system == "Windows":
+		installPath += "AppData/Roaming/openBriefcase/"
+		installPath.replace("/", "\\")
 
 else: # Testing.
-	basePath = str(os.getcwd()) + "/"
+	installPath = str(os.getcwd()) + "/"
 
-	dataPath = basePath + "data/"
-	reportsPath = basePath + "reports/"
-	resourcesPath = basePath + "resources/"
+	dataPath = installPath + "data/"
+	reportsPath = installPath + "reports/"
+	resourcesPath = installPath + "resources/"
 
 helpPath = resourcesPath + "openBriefcaseHelp.json"
 accountHelpPath = resourcesPath + "openBriefcaseAccountHelp.json"
@@ -65,13 +63,13 @@ if "install" in sys.argv and production:
 		if system != "Windows":
 			shutil.copy(currentPath + "openBriefcase", installPath + "openBriefcase")
 
-			if "openBriefcase" not in path:
+			if "openBriefcase" not in path: # type: ignore
 				CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
 
 		else:
 			shutil.copy(currentPath + "openBriefcase.exe", installPath + "openBriefcase.exe")
 
-			if "openBriefcase" not in path:
+			if "openBriefcase" not in path: # type: ignore
 				CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
 		
 		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "after": "\n"})
@@ -178,7 +176,7 @@ while True:
 		cmdString += "/" + current.name
 	cmdString += "]"
 
-	cmdHandler["request"] = cmdString
+	cmdHandler = {"request": cmdString}
 
 	# The help that gets printed and the commands depend on the environment.
 	if current == None:
@@ -246,10 +244,10 @@ while True:
 						CLIbrary.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion})
 
 						if CLIbrary.boolIn({"request": "Would you like to download the latest version?"}):
-							if not os.path.exists(basePath + "Downloads/"):
-								os.makedirs(basePath + "Downloads/")
+							if not os.path.exists(installPath + "Downloads/"):
+								os.makedirs(installPath + "Downloads/")
 
-							filePath = basePath + "Downloads/openBriefcase.zip"
+							filePath = installPath + "Downloads/openBriefcase.zip"
 							url = "https://github.com/diantonioandrea/openBriefcase/releases/download/" + latestVersion + "/openBriefcase-SYSTEM.zip".replace("SYSTEM", system.lower())
 
 							file = open(filePath, "wb")
@@ -423,9 +421,9 @@ while True:
 				continue
 
 			loadFile = CLIbrary.listCh({"list": loadFiles})
-			current.load({"path": dataPath + loadFile})
+			current.load({"path": dataPath + loadFile}) # type: ignore
 
-			CLIbrary.output({"verbose": True, "string": "LOADED " + str(len(current.movements) - oldMovements) + " MOVEMENTS FROM " + loadFile})
+			CLIbrary.output({"verbose": True, "string": "LOADED " + str(len(current.movements) - oldMovements) + " MOVEMENTS FROM " + loadFile}) # type: ignore			
 			continue
 
 		# COMMANDS THAT NEED AT LEAST ONE MOVEMENT
