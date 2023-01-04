@@ -1,13 +1,3 @@
-compile: # Linux and macOS compile
-	pyinstaller --onefile --console main.py
-	mv dist/main openBriefcase
-
-windows: # Windows compile
-	pyinstaller --onefile --console main.py
-	move .\dist\main.exe .\openBriefcase.exe
-
-# Linux and macOS only
-
 darwin: # macOS release
 	pyinstaller --onefile --console main.py
 	mv dist/main openBriefcase
@@ -20,6 +10,13 @@ linux: # Linux release
 	mkdir -p release
 	zip -r "release/openBriefcase-linux.zip" openBriefcase resources/
 
-clean:
+windows: # Windows release
+	pyinstaller --onefile --console main.py
+	move .\dist\main.exe .\openBriefcase.exe
+	if exist .\release rd /s /q .\release
+	mkdir release
+	zip -r "release/openBriefcase-windows.zip" .\openBriefcase.exe .\resources\
+
+clean: # Linux and macOS only
 	rm -rf dist build reports release data
 	rm -rf *.spec openBriefcase
