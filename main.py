@@ -23,9 +23,6 @@ if production: # Production.
 	
 	reportsPath = installPath + "Documents/Accounting/Reports/"
 
-	dataPath = installPath + "data/"
-	resourcesPath = installPath + "resources/"
-
 	if system == "Darwin":
 		installPath += "Library/openBriefcase/"
 	
@@ -34,7 +31,9 @@ if production: # Production.
 
 	elif system == "Windows":
 		installPath += "AppData/Roaming/openBriefcase/"
-		installPath.replace("/", "\\")
+	
+	dataPath = installPath + "data/"
+	resourcesPath = installPath + "resources/"
 
 else: # Testing.
 	installPath = str(os.getcwd()) + "/"
@@ -75,7 +74,7 @@ if "install" in sys.argv and production:
 		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "after": "\n"})
 		sys.exit(0)
 	
-	except(KeyboardInterrupt):
+	except:
 		CLIbrary.output({"error": True, "string": "INSTALLATION ERROR", "before": "\n", "after": "\n"})
 		sys.exit(-1)
 
