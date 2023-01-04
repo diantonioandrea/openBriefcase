@@ -201,7 +201,7 @@ while True:
 		if len(accounts):
 			cmdHandler["allowedCommands"] += ["select", "summary"]
 
-			if max([len(account.movements) for account in accounts]):
+			if max([len(account.movements) for account in accounts]) and system != "Windows":
 				cmdHandler["allowedCommands"].append("report")
 
 	else:
