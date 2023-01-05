@@ -31,10 +31,10 @@ def monthName(monthNumber: str) -> str:
 
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
-		return "\\color{solarized-green} \\Plus" + str(round(amount, 2)) + " \\color{solarized-base02}"
+		return "\\color{solarized-green} \\Plus" + str(round(amount, 2)) + "\\texteuro \\color{solarized-base02}"
 
 	else:
-		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + " \\color{solarized-base02}"
+		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + "\\texteuro \\color{solarized-base02}"
 
 def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePath: str) -> None:
 	accounts = user.accounts
@@ -43,7 +43,7 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePat
 	accountSummary += [" \\newline\n".join(["Username: " + str(user), "Liquidity: " + moneyPrint(sum(account.balance for account in accounts)), "Registration date: " + time.strftime("%A, %B %d, %Y at %H:%M", user.registrationDate)])]
 
 	accountSummary += ["\\subsection*{Accounts}"]
-	accountSummary += ["\n".join(["\\begin{description}", "\n".join(["\t\\item[" + account.name[0].upper() + account.name[1:] + "] " + str(len(account.movements)) + " registered movement(s), opened with: " + moneyPrint(account.start) + " and with a current balance of: " + moneyPrint(account.balance) for account in accounts]), "\\end{description}"])]
+	accountSummary += ["\n".join(["\\begin{description}", "\n".join(["\t\\item[" + account.name[0].upper() + account.name[1:] + "] " + str(len(account.movements)) + " registered movement(s), current balance of: " + moneyPrint(account.balance) + " \\newline \n\tOpened with: " + moneyPrint(account.start) for account in accounts]), "\\end{description}"])]
 
 	accountReports = []
 
