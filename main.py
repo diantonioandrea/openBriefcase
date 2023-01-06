@@ -4,7 +4,7 @@ import os, sys, time, random, shutil, requests, platform
 from colorama import init, Fore, Back, Style
 init()
 
-version = "v1.1.0_dev"
+version = "v1.1.0"
 production = True
 
 system = platform.system()
@@ -19,10 +19,9 @@ print("Accounting utility written in Python and built with CLIbrary")
 print("Developed by " + Style.BRIGHT + Fore.MAGENTA + "Andrea Di Antonio" + Style.RESET_ALL + ", more on https://github.com/diantonioandrea/openBriefcase")
 
 if production: # Production.
-	installPath = os.path.expanduser("~") + "/"
+	homePath = os.path.expanduser("~") + "/"
+	installPath = homePath
 	
-	reportsPath = installPath + "Documents/Accounting/Reports/"
-
 	if system == "Darwin":
 		installPath += "Library/openBriefcase/"
 	
@@ -31,13 +30,17 @@ if production: # Production.
 
 	elif system == "Windows":
 		installPath += "AppData/Roaming/openBriefcase/"
-	
+
+	downloadsPath = homePath + "Downloads/"
+	reportsPath = homePath + "Documents/Accounting/Reports/"
+
 	dataPath = installPath + "data/"
 	resourcesPath = installPath + "resources/"
 
 else: # Testing.
 	installPath = str(os.getcwd()) + "/"
 
+	downloadsPath = "" # Useless.
 	dataPath = installPath + "data/"
 	reportsPath = installPath + "reports/"
 	resourcesPath = installPath + "resources/"
@@ -201,6 +204,7 @@ while True:
 		if len(accounts):
 			cmdHandler["allowedCommands"] += ["select", "summary"]
 
+			# Reports not working on Windows.
 			if max([len(account.movements) for account in accounts]) and system != "Windows":
 				cmdHandler["allowedCommands"].append("report")
 
@@ -237,18 +241,20 @@ while True:
 				try:
 					latestVersion = requests.get("https://github.com/diantonioandrea/openBriefcase/releases/latest").url.split("/")[-1]
 
+					CLIbrary.output({"verbose": True, "string": "LATEST VERSION: " + latestVersion})
+
 					if version == latestVersion:
 						CLIbrary.output({"verbose": True, "string": "YOU'RE ON THE LATEST VERSION"})
 						continue
 
-					elif  version < latestVersion:
+					elif  version < latestVersion or (latestVersion in version and "_dev" in version):
 						CLIbrary.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion})
 
 						if CLIbrary.boolIn({"request": "Would you like to download the latest version?"}):
-							if not os.path.exists(installPath + "Downloads/"):
-								os.makedirs(installPath + "Downloads/")
+							if not os.path.exists(downloadsPath):
+								os.makedirs(downloadsPath)
 
-							filePath = installPath + "Downloads/openBriefcase.zip"
+							filePath = downloadsPath + "openBriefcase-SYSTEM.zip".replace("SYSTEM", system.lower())
 							url = "https://github.com/diantonioandrea/openBriefcase/releases/download/" + latestVersion + "/openBriefcase-SYSTEM.zip".replace("SYSTEM", system.lower())
 
 							file = open(filePath, "wb")
@@ -263,7 +269,7 @@ while True:
 						continue
 
 					elif version > latestVersion:
-						CLIbrary.output({"verbose": True, "string": "YOU'RE ON A NEWER VERSION THAN THE LATEST RELEASE"})
+						CLIbrary.output({"verbose": True, "string": "YOU'RE ON A NEWER VERSION: " + version})
 						continue
 
 				except:
