@@ -261,7 +261,7 @@ while True:
 							file.write(requests.get(url).content)
 							file.close()
 
-							CLIbrary.output({"verbose": True, "string": "SAVED TO: " + filePath})
+							CLIbrary.output({"verbose": True, "string": "SAVED TO: \'" + filePath + "\'"})
 						
 						else:
 							CLIbrary.output({"erorr": True, "string": "UPDATE IGNORED"})
@@ -488,7 +488,7 @@ while True:
 
 				current.dump({"path": dataPath + dumpFile}, sdOpts)
 
-				CLIbrary.output({"verbose": True, "string": "DUMPED TO " + dumpFile})
+				CLIbrary.output({"verbose": True, "string": "DUMPED TO \'" + dumpFile + "\'"})
 				continue
 
 print("\nGoodbye, " + str(user) + "\n")
