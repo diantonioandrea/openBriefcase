@@ -1,10 +1,23 @@
 import CLIbrary, openBriefcase, report
-
-import os, sys, time, random, shutil, requests, platform
+import os, sys, time, random, shutil, requests, platform, zipfile
 from colorama import init, Fore, Back, Style
 init()
 
-version = "v1.1.0"
+# ---
+# From an answer of Ciro Santilli on https://stackoverflow.com/questions/12791997/how-do-you-do-a-simple-chmod-x-from-within-python
+import stat
+
+def get_umask():
+    umask = os.umask(0)
+    os.umask(umask)
+
+    return umask
+
+def executable(filePath):
+    os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
+# ---
+
+version = "v1.2.0_dev"
 production = True
 
 system = platform.system()
@@ -31,7 +44,6 @@ if production: # Production.
 	elif system == "Windows":
 		installPath += "AppData/Roaming/openBriefcase/"
 
-	downloadsPath = homePath + "Downloads/"
 	reportsPath = homePath + "Documents/Accounting/Reports/"
 
 	dataPath = installPath + "data/"
@@ -40,7 +52,6 @@ if production: # Production.
 else: # Testing.
 	installPath = str(os.getcwd()) + "/"
 
-	downloadsPath = "" # Useless.
 	dataPath = installPath + "data/"
 	reportsPath = installPath + "reports/"
 	resourcesPath = installPath + "resources/"
@@ -49,7 +60,8 @@ helpPath = resourcesPath + "openBriefcaseHelp.json"
 accountHelpPath = resourcesPath + "openBriefcaseAccountHelp.json"
 reportTemplatePath = resourcesPath + "report.txt"
 
-# Installation
+# INSTALLATION
+
 if "install" in sys.argv and production:
 	print() # Empty line needed.
 
@@ -65,16 +77,16 @@ if "install" in sys.argv and production:
 		if system != "Windows":
 			shutil.copy(currentPath + "openBriefcase", installPath + "openBriefcase")
 
-			if "openBriefcase" not in path: # type: ignore
-				CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
-
 		else:
 			shutil.copy(currentPath + "openBriefcase.exe", installPath + "openBriefcase.exe")
-
-			if "openBriefcase" not in path: # type: ignore
-				CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD \'" + installPath + "\' TO PATH TO USE IT ANYWHERE"})
 		
-		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "after": "\n"})
+		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath})
+
+		if "openBriefcase" not in path: # type: ignore
+			CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD ITS INSTALLATION DIRECTORY TO PATH TO USE IT ANYWHERE", "after": "\n"})
+		
+		else:
+			print() # Empty line on exit.
 	
 	except:
 		CLIbrary.output({"error": True, "string": "INSTALLATION ERROR", "before": "\n", "after": "\n"})
@@ -83,7 +95,68 @@ if "install" in sys.argv and production:
 	finally:
 		sys.exit(0)
 
-try: # Checks folders.
+# UPDATE
+
+if production:
+	updateFlag = False
+
+	try:
+		latestVersion = requests.get("https://github.com/diantonioandrea/openBriefcase/releases/latest").url.split("/")[-1]
+
+		if  version < latestVersion or (latestVersion in version and "_dev" in version):
+			CLIbrary.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion, "before": "\n"})
+
+			if CLIbrary.boolIn({"request": "Would you like to download the latest version?"}):
+				tempPath = installPath + "temp/"
+
+				if not os.path.exists(tempPath):
+					os.makedirs(tempPath)
+
+				filePath = tempPath + "openBriefcase-SYSTEM.zip".replace("SYSTEM", system.lower())
+				url = "https://github.com/diantonioandrea/openBriefcase/releases/download/" + latestVersion + "/openBriefcase-SYSTEM.zip".replace("SYSTEM", system.lower())
+
+				file = open(filePath, "wb")
+				file.write(requests.get(url).content)
+				file.close()
+
+				updatePackage = zipfile.ZipFile(filePath, "r")
+				updatePackage.extractall(tempPath)
+
+				for file in os.listdir(tempPath + "resources/"):
+					shutil.copy(tempPath + "resources/" + file, resourcesPath + file)
+
+				if system != "Windows":
+					shutil.copy(tempPath + "openBriefcase", installPath + "openBriefcase")
+					executable(installPath + "openBriefcase")
+
+				else:
+					shutil.copy(tempPath + "openBriefcase.exe", installPath + "openBriefcase.exe")
+					executable(installPath + "openBriefcase.exe")
+
+				updateFlag = True
+				shutil.rmtree(tempPath)
+				CLIbrary.output({"verbose": True, "string": "UPDATED TO: " + latestVersion})
+			
+			else:
+				CLIbrary.output({"verbose": True, "string": "UPDATE IGNORED"})
+
+	except(requests.exceptions.RequestException):
+		CLIbrary.output({"error": True, "string": "COULDN'T CHECK FOR UPDATES", "before": "\n"})
+
+	except:
+		CLIbrary.output({"error": True, "string": "UPDATE MAY HAVE FAILED", "before": "\n", "after": "\n"})
+		sys.exit(-1)
+
+	finally:
+		if updateFlag:
+			CLIbrary.output({"verbose": True, "string": "THE PROGRAM HAS BEEN CLOSED TO COMPLETE THE UPDATE", "after": "\n"})
+			sys.exit(0)
+
+# CHECKS
+
+try:
+	# Folders.
+
 	if not os.path.exists(dataPath):
 		os.makedirs(dataPath)
 	
@@ -92,6 +165,14 @@ try: # Checks folders.
 
 	if not os.path.exists(resourcesPath):
 		raise(FileNotFoundError)
+
+	# Resources
+
+	resources = [helpPath, accountHelpPath, reportTemplatePath]
+	
+	for resource in resources:
+		if not os.path.exists(resource):
+			raise(FileNotFoundError)
 	
 except:
 	CLIbrary.output({"error": True, "string": "DATA OR RESOURCES ERROR", "before": "\n"})
@@ -104,25 +185,8 @@ except:
 
 	sys.exit(-1)
 
-try: # Checks resources.
-	resources = [helpPath, accountHelpPath, reportTemplatePath]
-	
-	for resource in resources:
-		if not os.path.exists(resource):
-			raise(FileNotFoundError)
+# LOGIN OR REGISTER
 
-except:
-	CLIbrary.output({"error": True, "string": "RESOURCES ERROR", "before": "\n"})
-
-	if production:
-		CLIbrary.output({"verbose": True, "string": "TRY REINSTALLING OPENBRIEFCASE", "after": "\n"})
-	
-	else:
-		print() # Empty line on exit.
-
-	sys.exit(-1)
-
-# Login or register
 while True:
 	user = openBriefcase.user()
 
@@ -161,7 +225,8 @@ while True:
 
 print("Type \'help\' if needed\n")
 
-# Interface
+# INTERFACE
+
 accounts = user.accounts
 current = None
 
@@ -233,52 +298,6 @@ while True:
 
 		if cmd == "exit": # Exits the program.
 			break
-
-		# UPDATE
-
-		elif cmd == "update": # Checks for updates
-			if production:
-				try:
-					latestVersion = requests.get("https://github.com/diantonioandrea/openBriefcase/releases/latest").url.split("/")[-1]
-
-					CLIbrary.output({"verbose": True, "string": "LATEST VERSION: " + latestVersion})
-
-					if version == latestVersion:
-						CLIbrary.output({"verbose": True, "string": "YOU'RE ON THE LATEST VERSION"})
-						continue
-
-					elif  version < latestVersion or (latestVersion in version and "_dev" in version):
-						CLIbrary.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion})
-
-						if CLIbrary.boolIn({"request": "Would you like to download the latest version?"}):
-							if not os.path.exists(downloadsPath):
-								os.makedirs(downloadsPath)
-
-							filePath = downloadsPath + "openBriefcase-SYSTEM.zip".replace("SYSTEM", system.lower())
-							url = "https://github.com/diantonioandrea/openBriefcase/releases/download/" + latestVersion + "/openBriefcase-SYSTEM.zip".replace("SYSTEM", system.lower())
-
-							file = open(filePath, "wb")
-							file.write(requests.get(url).content)
-							file.close()
-
-							CLIbrary.output({"verbose": True, "string": "SAVED TO: \'" + filePath + "\'"})
-						
-						else:
-							CLIbrary.output({"erorr": True, "string": "UPDATE IGNORED"})
-						
-						continue
-
-					elif version > latestVersion:
-						CLIbrary.output({"verbose": True, "string": "YOU'RE ON A NEWER VERSION: " + version})
-						continue
-
-				except:
-					CLIbrary.output({"error": True, "string": "UPDATE SYSTEM ERROR"})
-					continue
-			
-			else:
-				CLIbrary.output({"error": True, "string": "MUST BE ON PRODUCTION"})
-				continue
 
 		# PASSWORD
 
