@@ -264,7 +264,7 @@ while True:
 	cmdHandler["allowedCommands"] = ["new"]
 
 	if current == None:
-		cmdHandler["allowedCommands"] += ["update", "password", "clear", "delete"]
+		cmdHandler["allowedCommands"] += ["password", "clear", "delete"]
 
 		if len(accounts):
 			cmdHandler["allowedCommands"] += ["select", "summary"]
@@ -277,7 +277,7 @@ while True:
 		cmdHandler["allowedCommands"] += ["summary", "load"]
 
 		if len(current.movements):
-			cmdHandler["allowedCommands"] += ["summary", "dump", "edit", "remove"]
+			cmdHandler["allowedCommands"] += ["dump", "edit", "remove"]
 
 	command = CLIbrary.cmdIn(cmdHandler)
 
