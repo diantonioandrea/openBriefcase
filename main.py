@@ -17,19 +17,19 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.2.0_dev"
+version = "v1.2.0"
 production = True
+if "openBriefcase" not in "".join(sys.argv): # Local testing.
+	production = False
 
 system = platform.system()
 path = os.getenv("PATH")
 
-if "openBriefcase" not in "".join(sys.argv):
-	production = False
-
 print("\n" + Back.MAGENTA + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL) if production else print("\n" + Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL)
-
 print("Accounting utility written in Python and built with CLIbrary")
 print("Developed by " + Style.BRIGHT + Fore.MAGENTA + "Andrea Di Antonio" + Style.RESET_ALL + ", more on https://github.com/diantonioandrea/openBriefcase")
+
+# PATHS
 
 if production: # Production.
 	homePath = os.path.expanduser("~") + "/"
@@ -63,8 +63,6 @@ reportTemplatePath = resourcesPath + "report.txt"
 # INSTALLATION
 
 if "install" in sys.argv and production:
-	print() # Empty line needed.
-
 	try:
 		currentPath = os.getcwd() + "/"
 		
@@ -80,7 +78,7 @@ if "install" in sys.argv and production:
 		else:
 			shutil.copy(currentPath + "openBriefcase.exe", installPath + "openBriefcase.exe")
 		
-		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath})
+		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
 
 		if "openBriefcase" not in path: # type: ignore
 			CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD ITS INSTALLATION DIRECTORY TO PATH TO USE IT ANYWHERE", "after": "\n"})
@@ -254,7 +252,7 @@ while True:
 	else:
 		cmdHandler["helpPath"] = accountHelpPath
 
-	# The prompt turns red should liquidity go below zero.
+	# Prompt turns red should liquidity go below zero.
 	if sum([account.balance for account in accounts]) >= 0:
 		cmdHandler["style"] = Fore.GREEN
 	
