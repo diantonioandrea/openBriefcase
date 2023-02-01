@@ -1,9 +1,6 @@
 {
 	"exit": {
 		"description": "Exits the program."
-	},
-	"update": {
-		"description": "Checks for updates."
 	}, 
 	"password": {
 		"description": "Lets the user pick a password to protect its account or disable it."
