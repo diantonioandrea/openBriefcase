@@ -132,7 +132,7 @@ class account:
 						counter += 1
 						print("\t\t" + str(counter) + ". " + str(movement))
 		else:
-			CLIbrary.output({"error": True, "string": "NO MOVEMENTS"})
+			CLIbrary.output({"warning": True, "string": "NO MOVEMENTS"})
 
 		print("\nOpened with " + moneyPrint(self.start))
 		print("Balance: " + moneyPrint(self.balance))

@@ -17,7 +17,7 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.2.0"
+version = "v1.3.0_dev"
 production = True
 if "openBriefcase" not in "".join(sys.argv): # Local testing.
 	production = False
@@ -81,7 +81,7 @@ if "install" in sys.argv and production:
 		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
 
 		if "openBriefcase" not in path: # type: ignore
-			CLIbrary.output({"error": True, "string": "MAKE SURE TO ADD ITS INSTALLATION DIRECTORY TO PATH TO USE IT ANYWHERE", "after": "\n"})
+			CLIbrary.output({"warning": True, "string": "MAKE SURE TO ADD ITS INSTALLATION DIRECTORY TO PATH TO USE IT ANYWHERE", "after": "\n"})
 		
 		else:
 			print() # Empty line on exit.
@@ -173,13 +173,11 @@ try:
 			raise(FileNotFoundError)
 	
 except:
-	CLIbrary.output({"error": True, "string": "DATA OR RESOURCES ERROR", "before": "\n"})
-
 	if production:
-		CLIbrary.output({"verbose": True, "string": "TRY REINSTALLING OPENBRIEFCASE", "after": "\n"})
+		CLIbrary.output({"error": True, "string": "DATA OR RESOURCES ERROR, TRY REINSTALLING OPENBRIEFCASE", "before": "\n", "after": "\n"})
 	
 	else:
-		print() # Empty line on exit.
+		CLIbrary.output({"error": True, "string": "DATA OR RESOURCES ERROR", "before": "\n", "after": "\n"})
 
 	sys.exit(-1)
 
