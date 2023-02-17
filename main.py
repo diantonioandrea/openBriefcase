@@ -207,6 +207,23 @@ while True:
 		user.accounts = userData.accounts
 		user.registrationDate = userData.registrationDate
 
+		# TIME FIX, TO BE REMOVED
+
+		import time
+
+		user.registrationDate = datetime.fromtimestamp(time.mktime(user.registrationDate)) if type(user.registrationDate) == time.struct_time else user.registrationDate
+		userData.lastLogin = datetime.fromtimestamp(time.mktime(userData.lastLogin)) if type(userData.lastLogin) == time.struct_time else userData.lastLogin
+
+		for account in user.accounts:
+			account.creationDate = datetime.fromtimestamp(time.mktime(account.creationDate)) if type(account.creationDate) == time.struct_time else account.creationDate
+			account.lastModified = datetime.fromtimestamp(time.mktime(account.lastModified)) if type(account.lastModified) == time.struct_time else account.lastModified
+
+			for movement in account.movements:
+				movement.creationDate = datetime.fromtimestamp(time.mktime(movement.creationDate)) if type(movement.creationDate) == time.struct_time else movement.creationDate
+				movement.lastModified = datetime.fromtimestamp(time.mktime(movement.lastModified)) if type(movement.lastModified) == time.struct_time else movement.lastModified
+
+		# END OF FIX
+
 		print("\nWelcome back, " + str(user) + "\nLast login: " + userData.lastLogin.strftime("%A, %B %d, %Y at %H:%M"))
 		break
 
