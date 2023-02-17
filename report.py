@@ -1,33 +1,6 @@
 from pdflatex import PDFLaTeX
-import os, time
-
-def monthName(monthNumber: str) -> str:
-	if monthNumber == "01":
-		return "January"
-	if monthNumber == "02":
-		return "February"
-	if monthNumber == "03":
-		return "March"
-	if monthNumber == "04":
-		return "April"
-	if monthNumber == "05":
-		return "May"
-	if monthNumber == "06":
-		return "June"
-	if monthNumber == "07":
-		return "July"
-	if monthNumber == "08":
-		return "August"
-	if monthNumber == "09":
-		return "September"
-	if monthNumber == "10":
-		return "October"
-	if monthNumber == "11":
-		return "November"
-	if monthNumber == "12":
-		return "December"
-
-	return ""
+from datetime import datetime
+import os
 
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
@@ -40,7 +13,7 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePat
 	accounts = user.accounts
 
 	accountSummary = ["\\subsection*{User}"]
-	accountSummary += [" \\newline\n".join(["Username: " + str(user), "Liquidity: " + moneyPrint(sum(account.balance for account in accounts)), "Registration date: " + time.strftime("%A, %B %d, %Y at %H:%M", user.registrationDate)])]
+	accountSummary += [" \\newline\n".join(["Username: " + str(user), "Liquidity: " + moneyPrint(sum(account.balance for account in accounts)), "Registration date: " + user.registrationDate.strftime("%A, %B %d, %Y at %H:%M")])]
 
 	accountSummary += ["\\subsection*{Accounts}"]
 	accountSummary += ["\n".join(["\\begin{description}", "\n".join(["\t\\item[" + account.name[0].upper() + account.name[1:] + "] " + str(len(account.movements)) + " registered movement(s), current balance of: " + moneyPrint(account.balance) + " \\newline \n\tOpened with: " + moneyPrint(account.start) for account in accounts]), "\\end{description}"])]
@@ -109,7 +82,7 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePat
 				monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
 				monthMovements.sort(key = lambda entry: entry.date)
 
-				accountString += "\n\t\\item[" + monthName(month) + "] " + str(len(monthMovements)) + " movement(s) for a total of " + moneyPrint(sum([movement.amount for movement in monthMovements]))
+				accountString += "\n\t\\item[" + datetime.strptime(month, "%m").strftime('%B') + "] " + str(len(monthMovements)) + " movement(s) for a total of " + moneyPrint(sum([movement.amount for movement in monthMovements]))
 
 				income = sum([movement.amount for movement in monthMovements if movement.amount > 0])
 				expense = sum([movement.amount for movement in monthMovements if movement.amount < 0])
@@ -157,7 +130,7 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePat
 				monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
 				monthMovements.sort(key = lambda entry: entry.date)
 
-				accountString += "\n\\item[" + monthName(month) + "] \\leavevmode"
+				accountString += "\n\\item[" + datetime.strptime(month, "%m").strftime('%B') + "] \\leavevmode"
 
 				days = set([movement.date.split("-")[2] for movement in monthMovements])
 				days = list(days)
@@ -199,11 +172,11 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePat
 
 	timeRange += "From " + start + " to " + end
 
-	reportTime = time.strftime("%Y-%m-%dT%H:%M")
+	reportTime = datetime.now().strftime("%Y-%m-%dT%H:%M")
 
 	reportText = template.replace("SUMMARY", "\n\n".join(accountSummary))
 	reportText = reportText.replace("REPORTCONTENT", "\n\n".join(accountReports))
-	reportText = reportText.replace("DATE", "Compiled on " + time.strftime("%A, %B %d, %Y at %H:%M"))
+	reportText = reportText.replace("DATE", "Compiled on " + datetime.now().strftime("%A, %B %d, %Y at %H:%M"))
 	reportText = reportText.replace("TIMERANGE", timeRange)
 	reportText = reportText.replace("USER", str(user))
 

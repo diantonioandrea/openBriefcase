@@ -1,6 +1,7 @@
 import CLIbrary, openBriefcase, report
-import os, sys, time, random, shutil, requests, platform, zipfile
+import os, sys, random, shutil, requests, platform, zipfile
 from colorama import init, Fore, Back, Style
+from datetime import datetime
 init()
 
 # ---
@@ -206,7 +207,7 @@ while True:
 		user.accounts = userData.accounts
 		user.registrationDate = userData.registrationDate
 
-		print("\nWelcome back, " + str(user) + "\nLast login: " + time.strftime("%A, %B %d, %Y at %H:%M", userData.lastLogin))
+		print("\nWelcome back, " + str(user) + "\nLast login: " + userData.lastLogin.strftime("%A, %B %d, %Y at %H:%M"))
 		break
 
 	else:
@@ -397,7 +398,7 @@ while True:
 
 			elif cmd == "edit": # Edits an account name.
 				targetAccount.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": [account.name for account in accounts]})
-				targetAccount.lastModified = time.localtime()
+				targetAccount.lastModified = datetime.now()
 				continue
 
 			# REMOVE
@@ -475,7 +476,7 @@ while True:
 						if "date" in ddOpts:
 							targetMovement.date = CLIbrary.dateIn({"request": "Movement date"})
 
-						targetMovement.lastModified = time.localtime()
+						targetMovement.lastModified = datetime.now()
 
 						CLIbrary.output({"verbose": True, "string": "MOVEMENT EDITED"})
 						continue

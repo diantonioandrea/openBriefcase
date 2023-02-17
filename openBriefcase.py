@@ -1,35 +1,8 @@
-import CLIbrary, bcrypt, random, time
+import CLIbrary, bcrypt, random
 from colorama import Fore, Style
+from datetime import datetime
 
 # Utilities
-
-def monthName(monthNumber: str) -> str:
-	if monthNumber == "01":
-		return "January"
-	if monthNumber == "02":
-		return "February"
-	if monthNumber == "03":
-		return "March"
-	if monthNumber == "04":
-		return "April"
-	if monthNumber == "05":
-		return "May"
-	if monthNumber == "06":
-		return "June"
-	if monthNumber == "07":
-		return "July"
-	if monthNumber == "08":
-		return "August"
-	if monthNumber == "09":
-		return "September"
-	if monthNumber == "10":
-		return "October"
-	if monthNumber == "11":
-		return "November"
-	if monthNumber == "12":
-		return "December"
-
-	return ""
 
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
@@ -53,7 +26,7 @@ class user:
 	def __init__(self):
 		self.name = CLIbrary.strIn({"request": "\nUser", "noSpace": True})
 
-		self.registrationDate = time.localtime()
+		self.registrationDate = datetime.now()
 		self.lastLogin = self.registrationDate
 
 		self.protected = False
@@ -79,7 +52,7 @@ class account:
 		self.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": otherNames})
 		self.start = CLIbrary.numIn({"request": "Starting balance"})
 
-		self.creationDate = time.localtime()
+		self.creationDate = datetime.now()
 		self.lastModified = self.creationDate
 
 		self.balance = self.start
@@ -126,7 +99,7 @@ class account:
 					monthMovements.sort(key = lambda entry: entry.date)
 
 					counter = 0
-					print("\n\t" + monthName(month) + ", " + str(len(monthMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in monthMovements])) + "\n")
+					print("\n\t" + datetime.strptime(month, "%m").strftime('%B') + ", " + str(len(monthMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in monthMovements])) + "\n")
 
 					for movement in monthMovements:
 						counter += 1
@@ -184,7 +157,7 @@ class account:
 
 class movement:
 	def __init__(self, otherCodes: list):
-		self.creationDate = time.localtime()
+		self.creationDate = datetime.now()
 		self.lastModified = self.creationDate
 
 		self.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
