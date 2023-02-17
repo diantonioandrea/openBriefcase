@@ -280,13 +280,8 @@ while True:
 	cmd = command["command"]
 	sdOpts = command["sdOpts"]
 	ddOpts = command["ddOpts"]
-	output = command["output"]
 
 	# COMMANDS
-
-	if cmd == "help": # Prints the help.
-		print(output)
-		continue
 
 	if current == None:
 
