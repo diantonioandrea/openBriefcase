@@ -207,7 +207,7 @@ while True:
 		user.accounts = userData.accounts
 		user.registrationDate = userData.registrationDate
 
-		# TIME FIX, TO BE REMOVED
+		# TIME FIX, SOLVES BREAKS FROM 1.2.0 (time) TO 1.3.0 (datetime)
 
 		import time
 
@@ -281,7 +281,7 @@ while True:
 		cmdHandler["allowedCommands"] += ["password", "clear", "delete"]
 
 		if len(accounts):
-			cmdHandler["allowedCommands"] += ["select", "summary"]
+			cmdHandler["allowedCommands"] += ["select", "summary", "edit", "remove"]
 
 			# Reports not working on Windows.
 			if max([len(account.movements) for account in accounts]) and system != "Windows":

@@ -7,18 +7,18 @@
 	},
 	"select": {
 		"description": "Enters the specified account environment.",
-		"mandatoryOptions": "-n ACCOUNT_NAME"
+		"options": {"-n#": "ACCOUNT_NAME"}
 	},
 	"new": {
 		"description": "Creates a new account."
 	},
 	"edit": {
 		"description": "Edits an account name.",
-		"mandatoryOptions": "-n ACCOUNT_NAME"
+		"options": {"-n#": "ACCOUNT_NAME"}
 	},
 	"remove": {
 		"description": "Removes an account.",
-		"mandatoryOptions": "-n ACCOUNT_NAME"
+		"options": {"-n#": "ACCOUNT_NAME"}
 	},
 	"delete": {
 		"description": "Deletes the user's profile."
@@ -27,7 +27,7 @@
 		"description": "Prints a summary of the accounts."
 	},
 	"report": {
-		"description": "Compiles a report of all the account in the specified time range, if present. Make sure to have at least a registered movement.",
-		"options": "-s STARTING_TIME, -e ENDING_TIME"
+		"description": "Compiles a report of all the account in the specified time range.",
+		"options": {"-s": "STARTING_TIME", "-e": "ENDING_TIME"}
 	}
 }

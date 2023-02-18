@@ -6,22 +6,22 @@
 		"description": "Creates a new movement."
 	},
 	"edit": {
-		"description": "Edits a movement's features.",
-		"mandatoryOptions": "-c MOVEMENT_CODE, [--reason --amount --date]"
+		"description": "Edits a movement's features specifying at least an attribute.",
+		"options": {"-c#": "MOVEMENT_CODE", "--reason": "", "--amount": "", "--date": ""}
 	},
 	"remove": {
 		"description": "Removes a movement.",
-		"mandatoryOptions": "-c MOVEMENT_CODE"
+		"options": {"-c#": "MOVEMENT_CODE"}
 	},
 	"summary": {
 		"description": "Prints a summary of the account's movements."
 	},
 	"load": {
 		"description": "Loads a set of movements from a file.",
-		"mandatoryOptions": "-c MOVEMENT_CODE"
+		"options": {"-c#": "MOVEMENT_CODE"}
 	},
 	"dump": {
 		"description": "Dumps a set of movements to a file.",
-		"options": "-s STARTING_TIME, -e ENDING_TIME"
+		"options": {"-s": "STARTING_TIME", "-e": "ENDING_TIME"}
 	}
 }
