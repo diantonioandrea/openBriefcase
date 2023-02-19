@@ -1,5 +1,3 @@
-[![GitHub license](https://img.shields.io/github/license/diantonioandrea/openBriefcase)](https://github.com/diantonioandrea/openBriefcase/blob/main/LICENSE)
-
 # openBriefcase
 
 Accounting utility written in Python and built with [CLIbrary](https://github.com/diantonioandrea/CLIbrary).
