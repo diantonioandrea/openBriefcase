@@ -18,5 +18,5 @@ windows: # Windows release
 	zip -r "release/openBriefcase-windows.zip" .\openBriefcase.exe .\resources\
 
 clean: # Linux and macOS only
-	rm -rf dist build reports release data
+	rm -rf dist build reports release data __pycache__ .vscode
 	rm -rf *.spec openBriefcase
