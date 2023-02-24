@@ -18,7 +18,7 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.3.0_dev"
+version = "v1.3.0"
 production = True
 if "openBriefcase" not in "".join(sys.argv): # Local testing.
 	production = False
