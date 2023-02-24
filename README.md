@@ -11,13 +11,14 @@ There are some Python modules that need to be installed in order to compile and 
 1. Compilation
 	* pyinstaller, compilation of **openBriefcase**.
 2. Usage
+	* [CLIbrary](https://github.com/diantonioandrea/CLIbrary), interface, inputs and outputs.
 	* bcrypt, profile password-protection.
 	* colorama, coloured outputs.
 	* requests, update system.
 3. Reports
 	* pdflatex, compilation of LaTeX reports.
 
-Reports also need a full compy of TeX Live.
+Reports also need a full copy of TeX Live.
 
 ### Compiling and installing from source
 
