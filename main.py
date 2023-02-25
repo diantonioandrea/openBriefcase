@@ -1,8 +1,14 @@
-import CLIbrary, openBriefcase, report
+import openBriefcase, report
 import os, sys, random, shutil, requests, platform, zipfile
-from colorama import init, Fore, Back, Style
+from colorama import Fore, Back, Style
 from datetime import datetime
-init()
+
+# CLIbrary
+
+from CLIbrary import interface
+from CLIbrary import files
+from CLIbrary import inputs
+from CLIbrary import outputs
 
 # ---
 # From an answer of Ciro Santilli on https://stackoverflow.com/questions/12791997/how-do-you-do-a-simple-chmod-x-from-within-python
@@ -18,7 +24,7 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.3.0"
+version = "v1.4.0_dev"
 production = True
 if "openBriefcase" not in "".join(sys.argv): # Local testing.
 	production = False
@@ -79,16 +85,16 @@ if "install" in sys.argv and production:
 		else:
 			shutil.copy(currentPath + "openBriefcase.exe", installPath + "openBriefcase.exe")
 		
-		CLIbrary.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
+		outputs.output({"verbose": True, "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
 
 		if "openBriefcase" not in path: # type: ignore
-			CLIbrary.output({"warning": True, "string": "MAKE SURE TO ADD ITS INSTALLATION DIRECTORY TO PATH TO USE IT ANYWHERE", "after": "\n"})
+			outputs.output({"warning": True, "string": "MAKE SURE TO ADD ITS INSTALLATION DIRECTORY TO PATH TO USE IT ANYWHERE", "after": "\n"})
 		
 		else:
 			print() # Empty line on exit.
 	
 	except:
-		CLIbrary.output({"error": True, "string": "INSTALLATION ERROR", "before": "\n", "after": "\n"})
+		outputs.output({"error": True, "string": "INSTALLATION ERROR", "before": "\n", "after": "\n"})
 		sys.exit(-1)
 
 	finally:
@@ -103,9 +109,9 @@ if production:
 		latestVersion = requests.get("https://github.com/diantonioandrea/openBriefcase/releases/latest").url.split("/")[-1]
 
 		if  version < latestVersion or (latestVersion in version and "_dev" in version):
-			CLIbrary.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion, "before": "\n"})
+			outputs.output({"verbose": True, "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion, "before": "\n"})
 
-			if CLIbrary.boolIn({"request": "Would you like to download the latest version?"}):
+			if inputs.boolIn({"request": "Would you like to download the latest version?"}):
 				tempPath = installPath + "temp/"
 
 				if not os.path.exists(tempPath):
@@ -134,21 +140,21 @@ if production:
 
 				updateFlag = True
 				shutil.rmtree(tempPath)
-				CLIbrary.output({"verbose": True, "string": "UPDATED TO: " + latestVersion})
+				outputs.output({"verbose": True, "string": "UPDATED TO: " + latestVersion})
 			
 			else:
-				CLIbrary.output({"verbose": True, "string": "UPDATE IGNORED"})
+				outputs.output({"verbose": True, "string": "UPDATE IGNORED"})
 
 	except(requests.exceptions.RequestException):
-		CLIbrary.output({"error": True, "string": "COULDN'T CHECK FOR UPDATES", "before": "\n"})
+		outputs.output({"error": True, "string": "COULDN'T CHECK FOR UPDATES", "before": "\n"})
 
 	except:
-		CLIbrary.output({"error": True, "string": "UPDATE MAY HAVE FAILED", "before": "\n", "after": "\n"})
+		outputs.output({"error": True, "string": "UPDATE MAY HAVE FAILED", "before": "\n", "after": "\n"})
 		sys.exit(-1)
 
 	finally:
 		if updateFlag:
-			CLIbrary.output({"verbose": True, "string": "THE PROGRAM HAS BEEN CLOSED TO COMPLETE THE UPDATE", "after": "\n"})
+			outputs.output({"verbose": True, "string": "THE PROGRAM HAS BEEN CLOSED TO COMPLETE THE UPDATE", "after": "\n"})
 			sys.exit(0)
 
 # CHECKS
@@ -175,10 +181,10 @@ try:
 	
 except:
 	if production:
-		CLIbrary.output({"error": True, "string": "DATA OR RESOURCES ERROR, TRY REINSTALLING OPENBRIEFCASE", "before": "\n", "after": "\n"})
+		outputs.output({"error": True, "string": "DATA OR RESOURCES ERROR, TRY REINSTALLING OPENBRIEFCASE", "before": "\n", "after": "\n"})
 	
 	else:
-		CLIbrary.output({"error": True, "string": "DATA OR RESOURCES ERROR", "before": "\n", "after": "\n"})
+		outputs.output({"error": True, "string": "DATA OR RESOURCES ERROR", "before": "\n", "after": "\n"})
 
 	sys.exit(-1)
 
@@ -188,7 +194,7 @@ while True:
 	user = openBriefcase.user()
 
 	fileHandler = {"path": dataPath + user.name + ".obc", "ignoreMissing": True}
-	userData = CLIbrary.aLoad(fileHandler)
+	userData = files.aLoad(fileHandler)
 
 	if userData != None:
 		if userData.protected:
@@ -196,9 +202,9 @@ while True:
 				user.protected = True
 
 			else:
-				CLIbrary.output({"error": True, "string": "LOGIN ERROR"})
+				outputs.output({"error": True, "string": "LOGIN ERROR"})
 
-				if CLIbrary.boolIn({"request": "Exit"}):
+				if inputs.boolIn({"request": "Exit"}):
 					print() # Empty line on exit.
 					sys.exit(-1)
 				else:
@@ -228,8 +234,8 @@ while True:
 		break
 
 	else:
-		if not CLIbrary.boolIn({"request": "User \"" + user.name + "\" does not exist. Would you like to create it?"}):
-			if CLIbrary.boolIn({"request": "Exit"}):
+		if not inputs.boolIn({"request": "User \"" + user.name + "\" does not exist. Would you like to create it?"}):
+			if inputs.boolIn({"request": "Exit"}):
 				print() # Empty line on exit.
 				sys.exit(-1)
 			continue
@@ -251,7 +257,7 @@ while True:
 	accounts.sort(key = lambda entry: entry.balance, reverse=True)
 
 	fileHandler["data"] = user # type: ignore
-	CLIbrary.aDump(fileHandler)
+	files.aDump(fileHandler)
 
 	# Prompt.
 	cmdString = "[" + user.name + "@openBriefcase"
@@ -293,7 +299,7 @@ while True:
 		if len(current.movements):
 			cmdHandler["allowedCommands"] += ["dump", "edit", "remove"]
 
-	command = CLIbrary.cmdIn(cmdHandler)
+	command = interface.cmdIn(cmdHandler)
 
 	cmd = command["command"]
 	sdOpts = command["sdOpts"]
@@ -313,17 +319,17 @@ while True:
 		elif cmd == "password": # Toggles the password protection.
 			if user.protected:
 				if user.login(user.passwordHash):
-					CLIbrary.output({"verbose": True, "string": "PASSWORD DISABLED"})
+					outputs.output({"verbose": True, "string": "PASSWORD DISABLED"})
 					user.protected = False
 					user.passwordHash = ""
 					continue
 					
 				else:
-					CLIbrary.output({"error": True, "string": "WRONG PASSWORD"})
+					outputs.output({"error": True, "string": "WRONG PASSWORD"})
 					continue
 
 			user.register()
-			CLIbrary.output({"verbose": True, "string": "PASSWORD SET"})
+			outputs.output({"verbose": True, "string": "PASSWORD SET"})
 			continue
 
 		# NEW
@@ -331,10 +337,10 @@ while True:
 		elif cmd == "new": # Creates a new account.
 			newAccount = openBriefcase.account([account.name for account in accounts])
 
-			if CLIbrary.boolIn({"request": "Verify \"" + str(newAccount) + "\""}):
+			if inputs.boolIn({"request": "Verify \"" + str(newAccount) + "\""}):
 				accounts.append(newAccount)
 			
-			CLIbrary.output({"verbose": True, "string": "NEW ACCOUNT CREATED"})
+			outputs.output({"verbose": True, "string": "NEW ACCOUNT CREATED"})
 			continue
 
 		# SUMMARY
@@ -350,13 +356,13 @@ while True:
 		elif cmd == "delete": # Deletes the profile.
 			deletionCode = str(random.randint(10**3, 10**4-1))
 
-			if CLIbrary.strIn({"request": "Given that this action is irreversible, insert \"" + deletionCode + "\" to delete your profile"}) == deletionCode:
+			if inputs.strIn({"request": "Given that this action is irreversible, insert \"" + deletionCode + "\" to delete your profile"}) == deletionCode:
 				os.remove(dataPath + user.name + ".obc")
 
-				CLIbrary.output({"verbose": True, "string": "PROFILE DELETED"})
+				outputs.output({"verbose": True, "string": "PROFILE DELETED"})
 				break
 
-			CLIbrary.output({"error": True, "string": "WRONG VERIFICATION CODE"})
+			outputs.output({"error": True, "string": "WRONG VERIFICATION CODE"})
 			continue
 
 		# CLEAR
@@ -366,21 +372,21 @@ while True:
 			dumps = [file for file in os.listdir(dataPath) if ".obcm" in file]
 
 			if len(reports):
-				if CLIbrary.boolIn({"request": "Clear " + str(len(reports)) + " report(s)?"}):
+				if inputs.boolIn({"request": "Clear " + str(len(reports)) + " report(s)?"}):
 					for reportFile in reports:
 						os.remove(reportsPath + reportFile)
 					
-					CLIbrary.output({"verbose": True, "string": "CLEARED REPORTS"})
+					outputs.output({"verbose": True, "string": "CLEARED REPORTS"})
 
 			if len(dumps):
-				if CLIbrary.boolIn({"request": "Clear " + str(len(dumps)) + " dump(s)?"}):
+				if inputs.boolIn({"request": "Clear " + str(len(dumps)) + " dump(s)?"}):
 					for dumpFile in dumps:
 						os.remove(dataPath + dumpFile)
 					
-					CLIbrary.output({"verbose": True, "string": "CLEARED DUMPS"})
+					outputs.output({"verbose": True, "string": "CLEARED DUMPS"})
 
 			if not (len(reports) or len(dumps)):
-				CLIbrary.output({"error": True, "string": "NOTHING TO DO HERE"})
+				outputs.output({"error": True, "string": "NOTHING TO DO HERE"})
 
 			continue
 
@@ -388,13 +394,13 @@ while True:
 
 		elif cmd == "report": # Compiles the report for the selected time range.
 			report.report(user, sdOpts, ddOpts, reportsPath, reportTemplatePath)
-			CLIbrary.output({"verbose": True, "string": "REPORT SAVED TO \'" + reportsPath + "\'"})
+			outputs.output({"verbose": True, "string": "REPORT SAVED TO \'" + reportsPath + "\'"})
 			continue
 
 		# COMMANDS THAT NEED AN ACCOUNT NAME
 
 		if "n" not in sdOpts:
-			CLIbrary.output({"error": True, "string": "MISSING OPTION"})
+			outputs.output({"error": True, "string": "MISSING OPTION"})
 			continue
 
 		else:
@@ -402,7 +408,7 @@ while True:
 				targetAccount = [account for account in accounts if account.name == sdOpts["n"]].pop()
 
 			except:
-				CLIbrary.output({"error": True, "string": "ACCOUNT NOT FOUND"})
+				outputs.output({"error": True, "string": "ACCOUNT NOT FOUND"})
 				continue
 
 			# SELECT
@@ -414,7 +420,7 @@ while True:
 			# EDIT
 
 			elif cmd == "edit": # Edits an account name.
-				targetAccount.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": [account.name for account in accounts]})
+				targetAccount.name = inputs.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": [account.name for account in accounts]})
 				targetAccount.lastModified = datetime.now()
 				continue
 
@@ -422,7 +428,7 @@ while True:
 
 			elif cmd == "remove": # Removes an account.
 				accounts.remove(targetAccount)
-				CLIbrary.output({"verbose": True, "string": "ACCOUNT REMOVED"})
+				outputs.output({"verbose": True, "string": "ACCOUNT REMOVED"})
 				continue
 	
 	else:
@@ -452,19 +458,19 @@ while True:
 			loadFiles = [filename for filename in os.listdir(dataPath) if ".obcm" in filename]
 
 			if len(loadFiles) == 0:
-				CLIbrary.output({"error": True, "string": "NOTHING TO DO HERE"})
+				outputs.output({"error": True, "string": "NOTHING TO DO HERE"})
 				continue
 
-			loadFile = CLIbrary.listCh({"list": loadFiles})
+			loadFile = inputs.listCh({"list": loadFiles})
 			current.load({"path": dataPath + loadFile}) # type: ignore
 
-			CLIbrary.output({"verbose": True, "string": "LOADED " + str(len(current.movements) - oldMovements) + " MOVEMENTS FROM " + loadFile}) # type: ignore			
+			outputs.output({"verbose": True, "string": "LOADED " + str(len(current.movements) - oldMovements) + " MOVEMENTS FROM " + loadFile}) # type: ignore			
 			continue
 
 		# COMMANDS THAT NEED AT LEAST ONE MOVEMENT
 
 		if len(current.movements) == 0:
-			CLIbrary.output({"error": True, "string": "NO MOVEMENTS"})
+			outputs.output({"error": True, "string": "NO MOVEMENTS"})
 			continue
 
 		else:
@@ -473,7 +479,7 @@ while True:
 
 			if cmd in ["edit", "remove"]: # Edits or removes a movement.
 				if "c" not in sdOpts:
-					CLIbrary.output({"error": True, "string": "MISSING OPTION(S)"})
+					outputs.output({"error": True, "string": "MISSING OPTION(S)"})
 					continue
 
 				try:
@@ -481,31 +487,31 @@ while True:
 
 					if cmd == "edit":
 						if set(ddOpts).intersection({"reason", "amount", "date"}) == set():
-							CLIbrary.output({"error": True, "string": "NOTHING TO DO HERE"})
+							outputs.output({"error": True, "string": "NOTHING TO DO HERE"})
 							continue
 						
 						if "reason" in ddOpts:
-							targetMovement.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
+							targetMovement.reason = inputs.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
 						
 						if "amount" in ddOpts:
-							targetMovement.amount = CLIbrary.numIn({"request": "Movement amount", "round": 2})
+							targetMovement.amount = inputs.numIn({"request": "Movement amount", "round": 2})
 						
 						if "date" in ddOpts:
-							targetMovement.date = CLIbrary.dateIn({"request": "Movement date"})
+							targetMovement.date = inputs.dateIn({"request": "Movement date"})
 
 						targetMovement.lastModified = datetime.now()
 
-						CLIbrary.output({"verbose": True, "string": "MOVEMENT EDITED"})
+						outputs.output({"verbose": True, "string": "MOVEMENT EDITED"})
 						continue
 					
 					if cmd == "remove":
 						current.movements.remove(targetMovement)
 
-						CLIbrary.output({"verbose": True, "string": "MOVEMENT REMOVED"})
+						outputs.output({"verbose": True, "string": "MOVEMENT REMOVED"})
 						continue
 
 				except:
-					CLIbrary.output({"error": True, "string": "MOVEMENT NOT FOUND"})
+					outputs.output({"error": True, "string": "MOVEMENT NOT FOUND"})
 					continue
 			
 			# DUMP
@@ -516,7 +522,7 @@ while True:
 
 				current.dump({"path": dataPath + dumpFile}, sdOpts)
 
-				CLIbrary.output({"verbose": True, "string": "DUMPED TO \'" + dumpFile + "\'"})
+				outputs.output({"verbose": True, "string": "DUMPED TO \'" + dumpFile + "\'"})
 				continue
 
 print("\nGoodbye, " + str(user) + "\n")
