@@ -9,14 +9,13 @@ Accounting utility written in Python and built with [CLIbrary](https://github.co
 There are some Python modules that need to be installed in order to compile and use **openBriefcase**.
 
 1. Compilation
-	* pyinstaller, compilation of **openBriefcase**.
+	* pyinstaller: compilation of **openBriefcase**.
 2. Usage
-	* [CLIbrary](https://github.com/diantonioandrea/CLIbrary), interface, inputs and outputs.
-	* bcrypt, profile password-protection.
-	* colorama, coloured outputs.
-	* requests, update system.
+	* [CLIbrary](https://github.com/diantonioandrea/CLIbrary): interface, inputs and outputs.
+	* bcrypt: profile password-protection.
+	* requests: update system.
 3. Reports
-	* pdflatex, compilation of LaTeX reports.
+	* pdflatex: compilation of LaTeX reports.
 
 Reports also need a full copy of TeX Live.
 
