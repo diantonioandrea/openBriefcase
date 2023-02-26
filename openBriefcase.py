@@ -1,12 +1,6 @@
-import bcrypt, random
+import bcrypt, random, CLIbrary
 from colorama import Fore, Style
 from datetime import datetime
-
-# CLIbrary
-
-from CLIbrary import files
-from CLIbrary import inputs
-from CLIbrary import outputs
 
 # Utilities
 
@@ -30,7 +24,7 @@ def genCode(otherCodes: list, length: int) -> str:
 
 class user:
 	def __init__(self):
-		self.name = inputs.strIn({"request": "\nUser", "noSpace": True})
+		self.name = CLIbrary.strIn({"request": "\nUser", "noSpace": True})
 
 		self.registrationDate = datetime.now()
 		self.lastLogin = self.registrationDate
@@ -44,19 +38,19 @@ class user:
 		return self.name
 
 	def login(self, passwordHash):
-		password = inputs.strIn({"request": "Password", "noSpace": True, "fixedLength": 8})
+		password = CLIbrary.strIn({"request": "Password", "noSpace": True, "fixedLength": 8})
 		self.passwordHash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
 		return bcrypt.checkpw(password.encode(), passwordHash)
 
 	def register(self):
-		self.passwordHash = bcrypt.hashpw(inputs.strIn({"request": "Password", "noSpace": True, "verification": True, "fixedLength": 8}).encode(), bcrypt.gensalt())
+		self.passwordHash = bcrypt.hashpw(CLIbrary.strIn({"request": "Password", "noSpace": True, "verification": True, "fixedLength": 8}).encode(), bcrypt.gensalt())
 		self.protected = True
 
 class account:
 	def __init__(self, otherNames: list):
-		self.name = inputs.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": otherNames})
-		self.start = inputs.numIn({"request": "Starting balance"})
+		self.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": otherNames})
+		self.start = CLIbrary.numIn({"request": "Starting balance"})
 
 		self.creationDate = datetime.now()
 		self.lastModified = self.creationDate
@@ -77,7 +71,7 @@ class account:
 
 		if newMovement.confirmation:
 			self.movements.append(newMovement)
-			outputs.output({"verbose": True, "string": "MOVEMENT ADDED"})
+			CLIbrary.output({"type": "verbose", "string": "MOVEMENT ADDED"})
 		
 		self.update()
 
@@ -111,29 +105,29 @@ class account:
 						counter += 1
 						print("\t\t" + str(counter) + ". " + str(movement))
 		else:
-			outputs.output({"warning": True, "string": "NO MOVEMENTS"})
+			CLIbrary.output({"type": "warning", "string": "NO MOVEMENTS"})
 
 		print("\nOpened with " + moneyPrint(self.start))
 		print("Balance: " + moneyPrint(self.balance))
 
 	def load(self, fileHandler: dict):
-		loadData = files.aLoad(fileHandler)
+		loadData = CLIbrary.aLoad(fileHandler)
 
 		try:
 			if not bcrypt.checkpw("".join([movement.dump() for movement in loadData["movements"]]).encode(), loadData["hash"]): # type: ignore
-				outputs.output({"error": True, "string": "CORRUPTED DATA"})
+				CLIbrary.output({"type": "error", "string": "CORRUPTED DATA"})
 				return None
 		
 		except:
-			outputs.output({"error": True, "string": "DATA ERROR"})
+			CLIbrary.output({"type": "error", "string": "DATA ERROR"})
 
 		newMovements = [movement for movement in loadData["movements"] if movement.code not in [movement.code for movement in self.movements]] # type: ignore
 
 		if len(newMovements) == 0:
-			outputs.output({"error": True, "string": "NO LOADABLE MOVEMENTS FOUND"})
+			CLIbrary.output({"type": "error", "string": "NO LOADABLE MOVEMENTS FOUND"})
 			return None
 
-		if inputs.boolIn({"request": "Found " + str(len(newMovements)) + " loadable movement(s): \n\n" + "\n".join([str(movement) for movement in newMovements]) + "\n\nLoad the found movement(s)?"}):
+		if CLIbrary.boolIn({"request": "Found " + str(len(newMovements)) + " loadable movement(s): \n\n" + "\n".join([str(movement) for movement in newMovements]) + "\n\nLoad the found movement(s)?"}):
 			self.movements += newMovements
 
 		self.update()
@@ -159,20 +153,20 @@ class account:
 
 		fileHandler["data"] = dumpData
 
-		files.aDump(fileHandler)
+		CLIbrary.aDump(fileHandler)
 
 class movement:
 	def __init__(self, otherCodes: list):
 		self.creationDate = datetime.now()
 		self.lastModified = self.creationDate
 
-		self.reason = inputs.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
-		self.amount = inputs.numIn({"request": "Movement amount"})
-		self.date = inputs.dateIn({"request": "Movement date"})
+		self.reason = CLIbrary.strIn({"request": "Movement reason", "allowedChars": ["-", "'", ".", ",", ":"]})
+		self.amount = CLIbrary.numIn({"request": "Movement amount"})
+		self.date = CLIbrary.dateIn({"request": "Movement date"})
 
 		self.code = genCode(otherCodes, 6)
 
-		self.confirmation = inputs.boolIn({"request": "Verify \"" + str(self) + "\""})
+		self.confirmation = CLIbrary.boolIn({"request": "Verify \"" + str(self) + "\""})
 	
 	def __str__(self):
 		return self.date + ", " + self.reason + ": " + moneyPrint(self.amount) + Fore.CYAN + " #" + self.code + Style.RESET_ALL
