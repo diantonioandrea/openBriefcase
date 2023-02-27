@@ -3,6 +3,8 @@ import os, sys, random, shutil, requests, platform, zipfile, CLIbrary
 from colorama import Fore, Back, Style
 from datetime import datetime
 
+CLIbrary.style.setting_badge = "openBriefcase"
+
 # ---
 # From an answer of Ciro Santilli on https://stackoverflow.com/questions/12791997/how-do-you-do-a-simple-chmod-x-from-within-python
 import stat
@@ -17,7 +19,7 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.4.1"
+version = "v1.5.0_dev"
 production = True
 if "openBriefcase" not in "".join(sys.argv): # Local testing.
 	production = False
@@ -80,11 +82,11 @@ if "install" in sys.argv and production:
 		
 		CLIbrary.output({"type": "verbose", "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
 
-		if "openBriefcase" not in path: # type: ignore
+		if "openBriefcase" not in path:
 			CLIbrary.output({"type": "warning", "string": "MAKE SURE TO ADD ITS INSTALLATION DIRECTORY TO PATH TO USE IT ANYWHERE", "after": "\n"})
 		
 		else:
-			print() # Empty line on exit.
+			print("\nGoodbye.\n")
 	
 	except:
 		CLIbrary.output({"type": "error", "string": "INSTALLATION ERROR", "before": "\n", "after": "\n"})
@@ -198,7 +200,7 @@ while True:
 				CLIbrary.output({"type": "error", "string": "LOGIN ERROR"})
 
 				if CLIbrary.boolIn({"request": "Exit"}):
-					print() # Empty line on exit.
+					print("\nGoodbye.\n")
 					sys.exit(-1)
 				else:
 					continue
@@ -237,7 +239,7 @@ while True:
 	else:
 		if not CLIbrary.boolIn({"request": "User \"" + user.name + "\" does not exist. Would you like to create it?"}):
 			if CLIbrary.boolIn({"request": "Exit"}):
-				print() # Empty line on exit.
+				print("\nGoodbye.\n")
 				sys.exit(-1)
 			continue
 
@@ -257,7 +259,7 @@ while True:
 
 	accounts.sort(key = lambda entry: entry.balance, reverse=True)
 
-	fileHandler["data"] = user # type: ignore
+	fileHandler["data"] = user
 	CLIbrary.aDump(fileHandler)
 
 	# Prompt.
@@ -487,9 +489,9 @@ while True:
 				continue
 
 			loadFile = CLIbrary.listCh({"list": loadFiles})
-			current.load({"path": dataPath + loadFile}) # type: ignore
+			current.load({"path": dataPath + loadFile})
 
-			CLIbrary.output({"type": "verbose", "string": "LOADED " + str(len(current.movements) - oldMovements) + " MOVEMENTS FROM " + loadFile}) # type: ignore			
+			CLIbrary.output({"type": "verbose", "string": "LOADED " + str(len(current.movements) - oldMovements) + " MOVEMENTS FROM " + loadFile})			
 			continue
 
 		# COMMANDS THAT NEED AT LEAST ONE MOVEMENT
@@ -550,4 +552,4 @@ while True:
 				CLIbrary.output({"type": "verbose", "string": "DUMPED TO \'" + dumpFile + "\'"})
 				continue
 
-print("\nGoodbye, " + str(user) + "\n")
+print("\nGoodbye, " + str(user) + ".\n")

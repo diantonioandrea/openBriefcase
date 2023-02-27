@@ -116,14 +116,14 @@ class account:
 		loadData = CLIbrary.aLoad(fileHandler)
 
 		try:
-			if not bcrypt.checkpw("".join([movement.dump() for movement in loadData["movements"]]).encode(), loadData["hash"]): # type: ignore
+			if not bcrypt.checkpw("".join([movement.dump() for movement in loadData["movements"]]).encode(), loadData["hash"]):
 				CLIbrary.output({"type": "error", "string": "CORRUPTED DATA"})
 				return None
 		
 		except:
 			CLIbrary.output({"type": "error", "string": "DATA ERROR"})
 
-		newMovements = [movement for movement in loadData["movements"] if movement.code not in [movement.code for movement in self.movements]] # type: ignore
+		newMovements = [movement for movement in loadData["movements"] if movement.code not in [movement.code for movement in self.movements]]
 
 		if len(newMovements) == 0:
 			CLIbrary.output({"type": "error", "string": "NO LOADABLE MOVEMENTS FOUND"})

@@ -193,9 +193,8 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePat
 	reportPdf.write(pdf)
 	reportPdf.close()
 
-	if "keep" not in ddOpts:
-		try:
-			os.remove(reportTexPath)
-		
-		except:
-			pass
+	try:
+		os.remove(reportTexPath)
+	
+	except:
+		pass
