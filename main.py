@@ -17,7 +17,7 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.4.0_dev"
+version = "v1.4.0"
 production = True
 if "openBriefcase" not in "".join(sys.argv): # Local testing.
 	production = False
@@ -223,6 +223,13 @@ while True:
 
 		# END OF FIX
 
+		try:
+			if userData.darkTheme:
+				CLIbrary.style.setting_darkMode = True
+		
+		except:
+			pass
+
 		print("\nWelcome back, " + str(user) + "\nLast login: " + userData.lastLogin.strftime("%A, %B %d, %Y at %H:%M"))
 		break
 
@@ -313,11 +320,13 @@ while True:
 			if "t" in sdOpts:
 				if sdOpts["t"] == "light":
 					CLIbrary.style.setting_darkMode = False
+					user.darkTheme = False
 					CLIbrary.output({"type": "verbose", "string": "THEME SET TO LIGHT"})
 					continue
 				
 				elif sdOpts["t"] == "dark":
 					CLIbrary.style.setting_darkMode = True
+					user.darkTheme = True
 					CLIbrary.output({"type": "verbose", "string": "THEME SET TO DARK"})
 					continue
 

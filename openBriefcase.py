@@ -32,6 +32,8 @@ class user:
 		self.protected = False
 		self.passwordHash = ""
 
+		self.darkTheme = False
+
 		self.accounts = []
 	
 	def __str__(self):
