@@ -17,7 +17,7 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.4.0"
+version = "v1.4.1"
 production = True
 if "openBriefcase" not in "".join(sys.argv): # Local testing.
 	production = False
@@ -226,6 +226,7 @@ while True:
 		try:
 			if userData.darkTheme:
 				CLIbrary.style.setting_darkMode = True
+				user.darkTheme = userData.darkTheme
 		
 		except:
 			pass
