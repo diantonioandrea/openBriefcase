@@ -277,7 +277,7 @@ while True:
 	cmdHandler["allowedCommands"] = ["new"]
 
 	if current == None:
-		cmdHandler["allowedCommands"] += ["password", "clear", "delete"]
+		cmdHandler["allowedCommands"] += ["password", "set", "clear", "delete"]
 
 		if len(accounts):
 			cmdHandler["allowedCommands"] += ["select", "summary", "edit", "remove"]
@@ -306,6 +306,28 @@ while True:
 
 		if cmd == "exit": # Exits the program.
 			break
+
+		# SET
+
+		if cmd == "set": # Exits the program.
+			if "t" in sdOpts:
+				if sdOpts["t"] == "light":
+					CLIbrary.style.setting_darkMode = False
+					CLIbrary.output({"type": "verbose", "string": "THEME SET TO LIGHT"})
+					continue
+				
+				elif sdOpts["t"] == "dark":
+					CLIbrary.style.setting_darkMode = True
+					CLIbrary.output({"type": "verbose", "string": "THEME SET TO DARK"})
+					continue
+
+				else:
+					CLIbrary.output({"type": "error", "string": "UNKNOWN OPTION"})
+					continue
+			
+			else:
+				CLIbrary.output({"type": "error", "string": "MISSING OPTION"})
+				continue
 
 		# PASSWORD
 

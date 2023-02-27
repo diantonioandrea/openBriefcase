@@ -5,6 +5,10 @@
 	"password": {
 		"description": "Lets the user pick a password to protect its account or disable it."
 	},
+	"set": {
+		"description": "Sets the value for a setting.",
+		"options": {"-t": "THEME:light/dark"}
+	},
 	"select": {
 		"description": "Enters the specified account environment.",
 		"options": {"-n#": "ACCOUNT_NAME"}
