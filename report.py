@@ -9,7 +9,7 @@ def moneyPrint(amount: float) -> str:
 	else:
 		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + "\\texteuro \\color{solarized-base02}"
 
-def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePath: str) -> None:
+def report(user, sdOpts: dict, reportsPath: str, reportTemplatePath: str) -> None:
 	accounts = user.accounts
 
 	accountSummary = ["\\subsection*{User}"]
@@ -147,7 +147,9 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePat
 
 					for movement in dayMovements:
 						reasonString = movement.reason[0].upper() + movement.reason[1:]
-						accountString += "\n\t\t\t\\item[" + moneyPrint(movement.amount) + "] " + reasonString + " \\newline\n\t\t\t\\color{solarized-cyan} \\Hash " + movement.code + "\\color{solarized-base02}"
+						categoryString = movement.category[0].upper() + movement.category[1:]
+
+						accountString += "\n\t\t\t\\item[" + moneyPrint(movement.amount) + "] " + reasonString + " \\newline\n\t\t\t\\color{solarized-blue} " + categoryString + " \\color{solarized-cyan} \\Hash " + movement.code + "\\color{solarized-base02}"
 					
 					accountString += "\n\t\t\\end{description}"
 				

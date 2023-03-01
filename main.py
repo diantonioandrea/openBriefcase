@@ -208,7 +208,31 @@ while True:
 		user.accounts = userData.accounts
 		user.registrationDate = userData.registrationDate
 
-		# TIME FIX, SOLVES BREAKS FROM 1.2.0 (time) TO 1.3.0 (datetime)
+		# TIME FIX, SOLVES BREAKS FROM <= 1.2.0 (time) TO >= 1.3.0 (datetime)
+
+		import time
+
+		user.registrationDate = datetime.fromtimestamp(time.mktime(user.registrationDate)) if type(user.registrationDate) == time.struct_time else user.registrationDate
+		userData.lastLogin = datetime.fromtimestamp(time.mktime(userData.lastLogin)) if type(userData.lastLogin) == time.struct_time else userData.lastLogin
+
+		for account in user.accounts:
+			account.creationDate = datetime.fromtimestamp(time.mktime(account.creationDate)) if type(account.creationDate) == time.struct_time else account.creationDate
+			account.lastModified = datetime.fromtimestamp(time.mktime(account.lastModified)) if type(account.lastModified) == time.struct_time else account.lastModified
+
+			for movement in account.movements:
+				movement.creationDate = datetime.fromtimestamp(time.mktime(movement.creationDate)) if type(movement.creationDate) == time.struct_time else movement.creationDate
+				movement.lastModified = datetime.fromtimestamp(time.mktime(movement.lastModified)) if type(movement.lastModified) == time.struct_time else movement.lastModified
+
+		# END OF FIX
+
+		# CATEGORY FIX, SOLVES POSSIBLE BREAKS FROM <= 1.4.0 TO >= 1.5.0
+
+		for account in user.accounts:
+			for movement in account.movements:
+				if not hasattr(movement, "category"):
+					movement.category = "others"
+
+		# END OF FIX
 
 		import time
 
@@ -420,7 +444,7 @@ while True:
 		# REPORT
 
 		elif cmd == "report": # Compiles the report for the selected time range.
-			report.report(user, sdOpts, ddOpts, reportsPath, reportTemplatePath)
+			report.report(user, sdOpts, reportsPath, reportTemplatePath)
 			CLIbrary.output({"type": "verbose", "string": "REPORT SAVED TO \'" + reportsPath + "\'"})
 			continue
 

@@ -95,6 +95,11 @@ class account:
 				months.sort()
 
 				print("\n" + year + ", " + str(len(yearMovements)) + " movement(s), " + moneyPrint(sum([movement.amount for movement in yearMovements])))
+				print("\n\tMovements by category:\n")
+
+				categories = {movement.category for movement in yearMovements}
+				for category in categories:
+					print("\t\t" + Fore.BLUE + category + Style.RESET_ALL + ": " + str(moneyPrint(sum([movement.amount for movement in self.movements if movement.category == category]))))
 
 				for month in months:
 					monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
@@ -106,6 +111,7 @@ class account:
 					for movement in monthMovements:
 						counter += 1
 						print("\t\t" + str(counter) + ". " + str(movement))
+
 		else:
 			CLIbrary.output({"type": "warning", "string": "NO MOVEMENTS"})
 
@@ -116,7 +122,7 @@ class account:
 		loadData = CLIbrary.aLoad(fileHandler)
 
 		try:
-			if not bcrypt.checkpw("".join([movement.dump() for movement in loadData["movements"]]).encode(), loadData["hash"]):
+			if not bcrypt.checkpw("-".join([movement.dump() for movement in loadData["movements"]]).encode(), loadData["hash"]):
 				CLIbrary.output({"type": "error", "string": "CORRUPTED DATA"})
 				return None
 		
@@ -150,7 +156,7 @@ class account:
 			except:
 				pass
 
-		dumpData["hash"] = bcrypt.hashpw("".join([movement.dump() for movement in dumpMovements]).encode(), bcrypt.gensalt())
+		dumpData["hash"] = bcrypt.hashpw("-".join([movement.dump() for movement in dumpMovements]).encode(), bcrypt.gensalt())
 		dumpData["movements"] = dumpMovements
 
 		fileHandler["data"] = dumpData
@@ -166,13 +172,18 @@ class movement:
 		self.amount = CLIbrary.numIn({"request": "Movement amount"})
 		self.date = CLIbrary.dateIn({"request": "Movement date"})
 
+		categories = ["home", "transports", "travel", "school", "work", "hobbies"]
+		categories.sort()
+
+		self.category = CLIbrary.listCh({"request": "Movement category, by index", "list": ["others"] + categories})
+
 		self.code = genCode(otherCodes, 6)
 
 		self.confirmation = CLIbrary.boolIn({"request": "Verify \"" + str(self) + "\""})
 	
 	def __str__(self):
-		return self.date + ", " + self.reason + ": " + moneyPrint(self.amount) + Fore.CYAN + " #" + self.code + Style.RESET_ALL
+		return self.date + ", " + self.reason + ": " + moneyPrint(self.amount) + Fore.BLUE + " " + self.category + Style.RESET_ALL + Fore.CYAN + " #" + self.code + Style.RESET_ALL
 
-	def dump(self) -> str:
-		# date_reason_amount_code
-		return "_".join([self.date, self.reason, str(self.amount), self.code])
+	def dump(self) -> str: # For consistency reasons.
+		# date_reason_amount_category_code
+		return "_".join([self.date, self.reason, str(self.amount), self.category, self.code])
