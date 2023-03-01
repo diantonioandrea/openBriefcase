@@ -99,7 +99,7 @@ class account:
 
 				categories = {movement.category for movement in yearMovements}
 				for category in categories:
-					print("\t\t" + Fore.BLUE + category + Style.RESET_ALL + ": " + str(moneyPrint(sum([movement.amount for movement in self.movements if movement.category == category]))))
+					print("\t\t" + Fore.BLUE + category + Style.RESET_ALL + ": " + str(moneyPrint(sum([movement.amount for movement in yearMovements if movement.category == category]))))
 
 				for month in months:
 					monthMovements = [movement for movement in yearMovements if "-" + month + "-" in movement.date]
@@ -172,7 +172,7 @@ class movement:
 		self.amount = CLIbrary.numIn({"request": "Movement amount"})
 		self.date = CLIbrary.dateIn({"request": "Movement date"})
 
-		categories = ["home", "transports", "travel", "school", "work", "hobbies"]
+		categories = ["home", "food", "transports", "travel", "school", "work", "hobbies"]
 		categories.sort()
 
 		self.category = CLIbrary.listCh({"request": "Movement category, by index", "list": ["others"] + categories})
