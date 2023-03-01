@@ -7,7 +7,7 @@
 	},
 	"edit": {
 		"description": "Edits a movement's features specifying at least an attribute.",
-		"options": {"-c#": "MOVEMENT_CODE", "--reason": "", "--amount": "", "--date": ""}
+		"options": {"-c#": "MOVEMENT_CODE", "--reason": "", "--amount": "", "--date": "", "--category": ""}
 	},
 	"remove": {
 		"description": "Removes a movement.",

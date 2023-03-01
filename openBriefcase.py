@@ -172,16 +172,19 @@ class movement:
 		self.amount = CLIbrary.numIn({"request": "Movement amount"})
 		self.date = CLIbrary.dateIn({"request": "Movement date"})
 
-		categories = ["home", "food", "transports", "travel", "school", "work", "hobbies"]
-		categories.sort()
-
-		self.category = CLIbrary.listCh({"request": "Movement category, by index", "list": ["others"] + categories})
+		self.setCategory()
 
 		self.code = genCode(otherCodes, 6)
 
 		self.confirmation = CLIbrary.boolIn({"request": "Verify \"" + str(self) + "\""})
 	
-	def __str__(self):
+	def setCategory(self) -> None:
+		categories = ["home", "food", "transports", "travel", "school", "work", "hobbies", "health"]
+		categories.sort()
+
+		self.category = CLIbrary.listCh({"request": "Movement category, by index", "list": ["others"] + categories})
+
+	def __str__(self) -> str:
 		return self.date + ", " + self.reason + ": " + moneyPrint(self.amount) + Fore.BLUE + " " + self.category + Style.RESET_ALL + Fore.CYAN + " #" + self.code + Style.RESET_ALL
 
 	def dump(self) -> str: # For consistency reasons.

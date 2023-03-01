@@ -223,31 +223,14 @@ while True:
 				movement.creationDate = datetime.fromtimestamp(time.mktime(movement.creationDate)) if type(movement.creationDate) == time.struct_time else movement.creationDate
 				movement.lastModified = datetime.fromtimestamp(time.mktime(movement.lastModified)) if type(movement.lastModified) == time.struct_time else movement.lastModified
 
-		# END OF FIX
-
-		# CATEGORY FIX, SOLVES POSSIBLE BREAKS FROM <= 1.4.0 TO >= 1.5.0
+		# CATEGORY FIX, AVOIDS POSSIBLE BREAKS FROM <= 1.4.1 TO >= 1.5.0
 
 		for account in user.accounts:
 			for movement in account.movements:
 				if not hasattr(movement, "category"):
 					movement.category = "others"
 
-		# END OF FIX
-
-		import time
-
-		user.registrationDate = datetime.fromtimestamp(time.mktime(user.registrationDate)) if type(user.registrationDate) == time.struct_time else user.registrationDate
-		userData.lastLogin = datetime.fromtimestamp(time.mktime(userData.lastLogin)) if type(userData.lastLogin) == time.struct_time else userData.lastLogin
-
-		for account in user.accounts:
-			account.creationDate = datetime.fromtimestamp(time.mktime(account.creationDate)) if type(account.creationDate) == time.struct_time else account.creationDate
-			account.lastModified = datetime.fromtimestamp(time.mktime(account.lastModified)) if type(account.lastModified) == time.struct_time else account.lastModified
-
-			for movement in account.movements:
-				movement.creationDate = datetime.fromtimestamp(time.mktime(movement.creationDate)) if type(movement.creationDate) == time.struct_time else movement.creationDate
-				movement.lastModified = datetime.fromtimestamp(time.mktime(movement.lastModified)) if type(movement.lastModified) == time.struct_time else movement.lastModified
-
-		# END OF FIX
+		# END OF FIXES
 
 		try:
 			if userData.darkTheme:
@@ -537,7 +520,7 @@ while True:
 					targetMovement = [movement for movement in current.movements if movement.code == sdOpts["c"]].pop()
 
 					if cmd == "edit":
-						if set(ddOpts).intersection({"reason", "amount", "date"}) == set():
+						if set(ddOpts).intersection({"reason", "amount", "date", "category"}) == set():
 							CLIbrary.output({"type": "error", "string": "NOTHING TO DO HERE"})
 							continue
 						
@@ -549,6 +532,9 @@ while True:
 						
 						if "date" in ddOpts:
 							targetMovement.date = CLIbrary.dateIn({"request": "Movement date"})
+						
+						if "category" in ddOpts:
+							targetMovement.setCategory()
 
 						targetMovement.lastModified = datetime.now()
 
