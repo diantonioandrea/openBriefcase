@@ -19,7 +19,7 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.5.0_dev"
+version = "v1.5.0"
 production = True
 if "openBriefcase" not in "".join(sys.argv): # Local testing.
 	production = False
@@ -429,7 +429,7 @@ while True:
 		# REPORT
 
 		elif cmd == "report": # Compiles the report for the selected time range.
-			report.report(user, sdOpts, reportsPath, reportTemplatePath)
+			report.report(user, sdOpts, ddOpts, reportsPath, reportTemplatePath)
 			CLIbrary.output({"type": "verbose", "string": "REPORT SAVED TO \'" + reportsPath + "\'"})
 			continue
 

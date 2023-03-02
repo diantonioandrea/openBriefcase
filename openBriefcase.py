@@ -98,6 +98,13 @@ class account:
 				print("\n\tMovements by category:\n")
 
 				categories = {movement.category for movement in yearMovements}
+				categories = list(categories)
+				categories.sort()
+
+				if "others" in categories:
+					categories.remove("others")
+					categories = ["others"] + categories
+
 				for category in categories:
 					print("\t\t" + Fore.BLUE + category + Style.RESET_ALL + ": " + str(moneyPrint(sum([movement.amount for movement in yearMovements if movement.category == category]))))
 

@@ -4,12 +4,12 @@ import os
 
 def moneyPrint(amount: float) -> str:
 	if amount >= 0:
-		return "\\color{solarized-green} \\Plus" + str(round(amount, 2)) + "\\texteuro \\color{solarized-base02}"
+		return "\\color{solarized-green} \\Plus" + str(round(amount, 2)) + "\\texteuro \\color{#FONT}"
 
 	else:
-		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + "\\texteuro \\color{solarized-base02}"
+		return "\\color{solarized-red} \\Minus" + str(round(-amount, 2)) + "\\texteuro \\color{#FONT}"
 
-def report(user, sdOpts: dict, reportsPath: str, reportTemplatePath: str) -> None:
+def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePath: str) -> None:
 	accounts = user.accounts
 
 	accountSummary = ["\\subsection*{User}"]
@@ -58,7 +58,7 @@ def report(user, sdOpts: dict, reportsPath: str, reportTemplatePath: str) -> Non
 
 		years = set([movement.date.split("-")[0] for movement in movements])
 		years = list(years)
-		years.sort()
+		years.sort(reverse=True)
 
 		for year in years:
 			yearMovements = [movement for movement in movements if year in movement.date]
@@ -66,8 +66,13 @@ def report(user, sdOpts: dict, reportsPath: str, reportTemplatePath: str) -> Non
 			months = set([movement.date.split("-")[1] for movement in yearMovements])
 			months = list(months)
 			months.sort()
+			
+			if year != max(years):
+				accountString += "\n\n\\newpage\n\\subsection*{" + year + " statistics}"
+			
+			else:
+				accountString += "\n\n\\subsection*{" + year + " statistics}"
 
-			accountString += "\n\n\\subsection*{" + year + " statistics}"
 			accountString += "\n\n" + str(len(yearMovements)) + " movement(s) for a total of " + moneyPrint(sum([movement.amount for movement in yearMovements]))
 
 			income = sum([movement.amount for movement in yearMovements if movement.amount > 0])
@@ -75,6 +80,35 @@ def report(user, sdOpts: dict, reportsPath: str, reportTemplatePath: str) -> Non
 
 			accountString += " \\newline\nIncome: " + moneyPrint(income) if income != 0 else ""
 			accountString += " \\newline\nExpense: " + moneyPrint(expense) if expense != 0 else ""
+
+			accountString += "\n\n\\begin{multicols}{2}"
+
+			accountString += "\n\n\\subsubsection*{Categories}"
+
+			accountString += "\n\n\\begin{description}"
+
+			categories = {movement.category for movement in yearMovements}
+			categories = list(categories)
+			categories.sort()
+
+			if "others" in categories:
+				categories.remove("others")
+				categories = ["others"] + categories
+
+			for category in categories:
+				categoryMovements = [movement for movement in yearMovements if movement.category == category]
+
+				accountString += "\n\t\\item[" + category[0].upper() + category[1:] + "] " + str(len([movement for movement in categoryMovements])) + " movement(s) for a total of " + moneyPrint(sum([movement.amount for movement in categoryMovements]))
+
+				income = sum([movement.amount for movement in categoryMovements if movement.amount > 0])
+				expense = sum([movement.amount for movement in categoryMovements if movement.amount < 0])
+
+				accountString += " \\newline\n\tIncome: " + moneyPrint(income) if income != 0 else ""
+				accountString += " \\newline\n\tExpense: " + moneyPrint(expense) if expense != 0 else ""
+
+			accountString += "\n\\end{description}\n\n\\vfill\\null\n\\columnbreak"
+
+			accountString += "\n\n\\subsubsection*{Months}"
 
 			accountString += "\n\n\\begin{description}"
 
@@ -91,6 +125,8 @@ def report(user, sdOpts: dict, reportsPath: str, reportTemplatePath: str) -> Non
 				accountString += " \\newline\n\tExpense: " + moneyPrint(expense) if expense != 0 else ""
 			
 			accountString += "\n\\end{description}"
+
+			accountString += "\n\n\\end{multicols}"
 		
 		accountString += "\n\n\\newpage"
 		accountReports.append(accountString)
@@ -113,7 +149,7 @@ def report(user, sdOpts: dict, reportsPath: str, reportTemplatePath: str) -> Non
 
 		years = set([movement.date.split("-")[0] for movement in movements])
 		years = list(years)
-		years.sort()
+		years.sort(reverse=True)
 
 		for year in years:
 			yearMovements = [movement for movement in movements if year in movement.date]
@@ -149,14 +185,14 @@ def report(user, sdOpts: dict, reportsPath: str, reportTemplatePath: str) -> Non
 						reasonString = movement.reason[0].upper() + movement.reason[1:]
 						categoryString = movement.category[0].upper() + movement.category[1:]
 
-						accountString += "\n\t\t\t\\item[" + moneyPrint(movement.amount) + "] " + reasonString + " \\newline\n\t\t\t\\color{solarized-blue} " + categoryString + " \\color{solarized-cyan} \\Hash " + movement.code + "\\color{solarized-base02}"
+						accountString += "\n\t\t\t\\item[" + moneyPrint(movement.amount) + "] " + reasonString + " \\newline\n\t\t\t\\color{#FOURTH} " + categoryString + " \\color{#THIRD} \\Hash " + movement.code + "\\color{#FONT}"
 					
 					accountString += "\n\t\t\\end{description}"
 				
 				accountString += "\n\t\\end{description}"
 		
 			accountString += "\n\\end{description}"
-			accountString += "\n\n\\end{multicols*} \n\n\\newpage"
+			accountString += "\n\n\\end{multicols*}\n\n\\newpage"
 
 		accountReports.append(accountString)
 	
@@ -182,6 +218,20 @@ def report(user, sdOpts: dict, reportsPath: str, reportTemplatePath: str) -> Non
 	reportText = reportText.replace("TIMERANGE", timeRange)
 	reportText = reportText.replace("USER", str(user))
 
+	if not user.darkTheme:
+		reportText = reportText.replace("#BACKGROUND", "solarized-base3")
+		reportText = reportText.replace("#FONT", "solarized-base03")
+		reportText = reportText.replace("#ACCENT", "solarized-orange")
+		reportText = reportText.replace("#THIRD", "solarized-cyan")
+		reportText = reportText.replace("#FOURTH", "solarized-blue")
+	
+	else:
+		reportText = reportText.replace("#BACKGROUND", "solarized-base02")
+		reportText = reportText.replace("#FONT", "solarized-base1")
+		reportText = reportText.replace("#ACCENT", "solarized-orange")
+		reportText = reportText.replace("#THIRD", "solarized-cyan")
+		reportText = reportText.replace("#FOURTH", "solarized-blue")
+
 	reportTexPath = reportsPath + "lastReport.tex"
 	reportTex = open(reportTexPath, "w")
 	reportTex.write(reportText)
@@ -196,7 +246,8 @@ def report(user, sdOpts: dict, reportsPath: str, reportTemplatePath: str) -> Non
 	reportPdf.close()
 
 	try:
-		os.remove(reportTexPath)
-	
+		if "keep" not in ddOpts:
+			os.remove(reportTexPath)
+
 	except:
 		pass

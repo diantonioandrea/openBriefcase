@@ -28,13 +28,13 @@
 
 \hypersetup{
     colorlinks=true,
-    linkcolor=solarized-cyan,
-    urlcolor=solarized-orange,
+    linkcolor=#THIRD,
+    urlcolor=#ACCENT,
     pdfpagemode=FullScreen,
 }
 
-\pagecolor{solarized-base3}
-\color{solarized-base02}
+\pagecolor{#BACKGROUND}
+\color{#FONT}
 
 \usepackage{etoolbox}
 \patchcmd{\part}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
