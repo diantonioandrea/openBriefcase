@@ -7,18 +7,17 @@
 	},
 	"edit": {
 		"description": "Edits a movement's features specifying at least an attribute.",
-		"options": {"-c#": "MOVEMENT_CODE", "--reason": "", "--amount": "", "--date": "", "--category": ""}
+		"options": {"-q#": "MOVEMENT_QUERY", "--reason": "", "--amount": "", "--date": "", "--category": ""}
 	},
 	"remove": {
 		"description": "Removes a movement.",
-		"options": {"-c#": "MOVEMENT_CODE"}
+		"options": {"-c#": "MOVEMENT_QUERY"}
 	},
 	"summary": {
 		"description": "Prints a summary of the account's movements."
 	},
 	"load": {
-		"description": "Loads a set of movements from a file.",
-		"options": {"-c#": "MOVEMENT_CODE"}
+		"description": "Loads a set of movements from a file."
 	},
 	"dump": {
 		"description": "Dumps a set of movements to a file.",

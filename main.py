@@ -208,6 +208,8 @@ while True:
 		user.accounts = userData.accounts
 		user.registrationDate = userData.registrationDate
 
+		# USER DATA FIXES
+
 		# TIME FIX, SOLVES BREAKS FROM <= 1.2.0 (time) TO >= 1.3.0 (datetime)
 
 		import time
@@ -238,7 +240,7 @@ while True:
 				user.darkTheme = userData.darkTheme
 		
 		except:
-			pass
+			user.darkTheme = False
 
 		print("\nWelcome back, " + str(user) + "\nLast login: " + userData.lastLogin.strftime("%A, %B %d, %Y at %H:%M"))
 		break
@@ -512,16 +514,26 @@ while True:
 			# EDIT OR REMOVE
 
 			if cmd in ["edit", "remove"]: # Edits or removes a movement.
-				if "c" not in sdOpts:
+				if "q" not in sdOpts:
 					CLIbrary.output({"type": "error", "string": "MISSING OPTION(S)"})
 					continue
 
-				try:
-					targetMovement = [movement for movement in current.movements if movement.code == sdOpts["c"]].pop()
+				targetMovements = [movement for movement in current.movements if sdOpts["q"] in movement.dump()]
 
+				if not len(targetMovements):
+					CLIbrary.output({"type": "error", "string": "NO MOVEMENTS FOUND"})
+					continue
+
+				if not CLIbrary.boolIn({"request": "Found " + str(len(targetMovements)) + " movements, would you like to continue?"}):
+					continue
+				
+				for targetMovement in targetMovements:
 					if cmd == "edit":
 						if set(ddOpts).intersection({"reason", "amount", "date", "category"}) == set():
 							CLIbrary.output({"type": "error", "string": "NOTHING TO DO HERE"})
+							break
+
+						if not CLIbrary.boolIn({"request": "Would you like to edit \"" + str(targetMovement) + "\"?"}):
 							continue
 						
 						if "reason" in ddOpts:
@@ -541,15 +553,14 @@ while True:
 						CLIbrary.output({"type": "verbose", "string": "MOVEMENT EDITED"})
 						continue
 					
-					if cmd == "remove":
+					elif cmd == "remove":
+						if not CLIbrary.boolIn({"request": "Would you like to remove \"" + str(targetMovement) + "\"?"}):
+							continue
+
 						current.movements.remove(targetMovement)
 
 						CLIbrary.output({"type": "verbose", "string": "MOVEMENT REMOVED"})
 						continue
-
-				except:
-					CLIbrary.output({"type": "error", "string": "MOVEMENT NOT FOUND"})
-					continue
 			
 			# DUMP
 	
