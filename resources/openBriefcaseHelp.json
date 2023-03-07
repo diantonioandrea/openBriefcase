@@ -33,5 +33,8 @@
 	"report": {
 		"description": "Compiles a report of all the account in the specified time range.",
 		"options": {"-s": "STARTING_TIME", "-e": "ENDING_TIME"}
+	},
+	"clear": {
+		"description": "Clears old reports and dumps."
 	}
 }

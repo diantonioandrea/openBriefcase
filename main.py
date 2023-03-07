@@ -3,8 +3,6 @@ import os, sys, random, shutil, requests, platform, zipfile, CLIbrary
 from colorama import Fore, Back, Style
 from datetime import datetime
 
-CLIbrary.style.setting_badge = "openBriefcase"
-
 # ---
 # From an answer of Ciro Santilli on https://stackoverflow.com/questions/12791997/how-do-you-do-a-simple-chmod-x-from-within-python
 import stat
@@ -19,7 +17,7 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.5.0"
+version = "v1.6.0"
 production = True
 if "openBriefcase" not in "".join(sys.argv): # Local testing.
 	production = False

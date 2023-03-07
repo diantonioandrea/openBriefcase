@@ -17,6 +17,10 @@ There are some Python modules that need to be installed in order to compile and 
 3. Reports
 	* pdflatex: compilation of LaTeX reports.
 
+As a one-liner:
+
+	python3 -m pip install pyinstaller CLIbrary bcrypt requests pdflatex
+
 Reports also need a full copy of TeX Live.
 
 ### Compiling and installing from source
