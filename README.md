@@ -19,7 +19,7 @@ There are some Python modules that need to be installed in order to compile and 
 
 As a one-liner:
 
-	python3 -m pip install pyinstaller CLIbrary bcrypt requests pdflatex
+	python3 -m pip install --upgrade pyinstaller CLIbrary bcrypt requests pdflatex
 
 Reports also need a full copy of TeX Live.
 
