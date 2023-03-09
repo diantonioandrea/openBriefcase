@@ -3,6 +3,8 @@ import os, sys, random, shutil, requests, platform, zipfile, CLIbrary
 from colorama import Fore, Back, Style
 from datetime import datetime
 
+CLIbrary.data.setting_fileExtension = "" # Not using CLIbrary's extension system due to .obc and .obcm files.
+
 # ---
 # From an answer of Ciro Santilli on https://stackoverflow.com/questions/12791997/how-do-you-do-a-simple-chmod-x-from-within-python
 import stat
