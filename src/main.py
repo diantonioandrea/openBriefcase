@@ -456,7 +456,7 @@ while True:
 			# EDIT
 
 			elif cmd == "edit": # Edits an account name.
-				targetAccount.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": [account.name for account in accounts]})
+				targetAccount.name = CLIbrary.strIn({"request": "Account name", "space": False, "blockedAnswers": [account.name for account in accounts]})
 				targetAccount.lastModified = datetime.now()
 				continue
 

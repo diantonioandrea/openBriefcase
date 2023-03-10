@@ -24,7 +24,7 @@ def genCode(otherCodes: list, length: int) -> str:
 
 class user:
 	def __init__(self):
-		self.name = CLIbrary.strIn({"request": "\nUser", "noSpace": True})
+		self.name = CLIbrary.strIn({"request": "\nUser", "space": False})
 
 		self.registrationDate = datetime.now()
 		self.lastLogin = self.registrationDate
@@ -40,18 +40,18 @@ class user:
 		return self.name
 
 	def login(self, passwordHash):
-		password = CLIbrary.strIn({"request": "Password", "noSpace": True, "fixedLength": 8})
+		password = CLIbrary.strIn({"request": "Password", "space": False, "fixedLength": 8})
 		self.passwordHash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
 		return bcrypt.checkpw(password.encode(), passwordHash)
 
 	def register(self):
-		self.passwordHash = bcrypt.hashpw(CLIbrary.strIn({"request": "Password", "noSpace": True, "verification": True, "fixedLength": 8}).encode(), bcrypt.gensalt())
+		self.passwordHash = bcrypt.hashpw(CLIbrary.strIn({"request": "Password", "space": False, "verification": True, "fixedLength": 8}).encode(), bcrypt.gensalt())
 		self.protected = True
 
 class account:
 	def __init__(self, otherNames: list):
-		self.name = CLIbrary.strIn({"request": "Account name", "noSpace": True, "blockedAnswers": otherNames})
+		self.name = CLIbrary.strIn({"request": "Account name", "space": False, "blockedAnswers": otherNames})
 		self.start = CLIbrary.numIn({"request": "Starting balance"})
 
 		self.creationDate = datetime.now()
