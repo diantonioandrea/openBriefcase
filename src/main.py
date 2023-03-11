@@ -19,17 +19,18 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.6.0"
+name = "openBriefcase"
+version = "v1.6.0_dev"
 production = True
-if "openBriefcase" not in "".join(sys.argv): # Local testing.
+if name not in "".join(sys.argv): # Local testing.
 	production = False
 
 system = platform.system()
 path = os.getenv("PATH")
 
-print("\n" + Back.MAGENTA + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL) if production else print("\n" + Back.WHITE + Fore.MAGENTA + " openBriefcase " + Style.RESET_ALL)
+print("\n" + Back.MAGENTA + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.MAGENTA + " " + name + " " + Style.RESET_ALL) if production else print("\n" + Back.WHITE + Fore.BLUE + " " + name + " " + Style.RESET_ALL)
 print("Accounting utility written in Python and built with CLIbrary")
-print("Developed by " + Style.BRIGHT + Fore.MAGENTA + "Andrea Di Antonio" + Style.RESET_ALL + ", more on " + Style.BRIGHT + "https://github.com/diantonioandrea/openBriefcase" + Style.RESET_ALL)
+print("Developed by " + Style.BRIGHT + Fore.MAGENTA + "Andrea Di Antonio" + Style.RESET_ALL + ", more on " + Style.BRIGHT + "https://github.com/diantonioandrea/" + name + Style.RESET_ALL)
 
 # PATHS
 
@@ -38,29 +39,27 @@ if production: # Production.
 	installPath = homePath
 	
 	if system == "Darwin":
-		installPath += "Library/openBriefcase/"
+		installPath += "Library/" + name + "/"
 	
 	elif system == "Linux":
-		installPath += ".local/bin/openBriefcase/"
+		installPath += ".local/bin/" + name + "/"
 
 	elif system == "Windows":
-		installPath += "AppData/Roaming/openBriefcase/"
+		installPath += "AppData/Roaming/" + name + "/"
 
 	reportsPath = homePath + "Documents/Accounting/Reports/"
-
-	dataPath = installPath + "data/"
-	resourcesPath = installPath + "resources/"
 
 else: # Testing.
 	installPath = str(os.getcwd()) + "/"
 
-	dataPath = installPath + "data/"
 	reportsPath = installPath + "reports/"
-	resourcesPath = installPath + "resources/"
 
-helpPath = resourcesPath + "openBriefcaseHelp.json"
-accountHelpPath = resourcesPath + "openBriefcaseAccountHelp.json"
+dataPath = installPath + "data/"
+resourcesPath = installPath + "resources/"
 reportTemplatePath = resourcesPath + "report.txt"
+
+helpPath = resourcesPath + name + "Help.json"
+accountHelpPath = resourcesPath + name + "AccountHelp.json"
 
 # INSTALLATION
 
@@ -75,14 +74,14 @@ if "install" in sys.argv and production:
 			shutil.copy(currentPath + "resources/" + file, resourcesPath + file)
 
 		if system != "Windows":
-			shutil.copy(currentPath + "openBriefcase", installPath + "openBriefcase")
+			shutil.copy(currentPath + name, installPath + name)
 
 		else:
-			shutil.copy(currentPath + "openBriefcase.exe", installPath + "openBriefcase.exe")
-		
-		CLIbrary.output({"type": "verbose", "string": "OPENBRIEFCASE INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
+			shutil.copy(currentPath + name + ".exe", installPath + name + ".exe")
 
-		if "openBriefcase" not in path:
+		CLIbrary.output({"type": "verbose", "string": name.upper() + " INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
+
+		if name not in path:
 			CLIbrary.output({"type": "warning", "string": "MAKE SURE TO ADD ITS INSTALLATION DIRECTORY TO PATH TO USE IT ANYWHERE", "after": "\n"})
 		
 		else:
@@ -101,7 +100,7 @@ if production:
 	updateFlag = False
 
 	try:
-		latestVersion = requests.get("https://github.com/diantonioandrea/openBriefcase/releases/latest").url.split("/")[-1]
+		latestVersion = requests.get("https://github.com/diantonioandrea/" + name + "/releases/latest").url.split("/")[-1]
 
 		if  version < latestVersion or (latestVersion in version and "_dev" in version):
 			CLIbrary.output({"type": "verbose", "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion, "before": "\n"})
@@ -112,8 +111,8 @@ if production:
 				if not os.path.exists(tempPath):
 					os.makedirs(tempPath)
 
-				filePath = tempPath + "openBriefcase-SYSTEM.zip".replace("SYSTEM", system.lower())
-				url = "https://github.com/diantonioandrea/openBriefcase/releases/download/" + latestVersion + "/openBriefcase-SYSTEM.zip".replace("SYSTEM", system.lower())
+				filePath = tempPath + name + "-SYSTEM.zip".replace("SYSTEM", system.lower())
+				url = "https://github.com/diantonioandrea/" + name + "/releases/download/" + latestVersion + "/" + name + "-SYSTEM.zip".replace("SYSTEM", system.lower())
 
 				file = open(filePath, "wb")
 				file.write(requests.get(url).content)
@@ -126,12 +125,12 @@ if production:
 					shutil.copy(tempPath + "resources/" + file, resourcesPath + file)
 
 				if system != "Windows":
-					shutil.copy(tempPath + "openBriefcase", installPath + "openBriefcase")
-					executable(installPath + "openBriefcase")
+					shutil.copy(tempPath + name, installPath + name)
+					executable(installPath + name)
 
 				else:
-					shutil.copy(tempPath + "openBriefcase.exe", installPath + "openBriefcase.exe")
-					executable(installPath + "openBriefcase.exe")
+					shutil.copy(tempPath + name + ".exe", installPath + name + ".exe")
+					executable(installPath + name + ".exe")
 
 				updateFlag = True
 				shutil.rmtree(tempPath)
@@ -156,10 +155,9 @@ if production:
 
 try:
 	# Folders.
-
 	if not os.path.exists(dataPath):
 		os.makedirs(dataPath)
-	
+
 	if not os.path.exists(reportsPath):
 		os.makedirs(reportsPath)
 
@@ -167,7 +165,6 @@ try:
 		raise(FileNotFoundError)
 
 	# Resources
-
 	resources = [helpPath, accountHelpPath, reportTemplatePath]
 	
 	for resource in resources:
@@ -176,7 +173,7 @@ try:
 	
 except:
 	if production:
-		CLIbrary.output({"type": "error", "string": "DATA OR RESOURCES ERROR, TRY REINSTALLING OPENBRIEFCASE", "before": "\n", "after": "\n"})
+		CLIbrary.output({"type": "error", "string": "DATA OR RESOURCES ERROR, TRY REINSTALLING " + name.upper(), "after": "\n"})
 	
 	else:
 		CLIbrary.output({"type": "error", "string": "DATA OR RESOURCES ERROR", "before": "\n", "after": "\n"})
@@ -272,7 +269,7 @@ while True:
 	CLIbrary.aDump(fileHandler)
 
 	# Prompt.
-	cmdString = "[" + user.name + "@openBriefcase"
+	cmdString = "[" + user.name + "@" + name
 	if current != None:
 		cmdString += "/" + current.name
 	cmdString += "]"
