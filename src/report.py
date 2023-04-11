@@ -218,7 +218,7 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePat
 	reportText = reportText.replace("TIMERANGE", timeRange)
 	reportText = reportText.replace("USER", str(user))
 
-	if not user.darkTheme:
+	if "dark" not in ddOpts: # Optional dark themed reports.
 		reportText = reportText.replace("#BACKGROUND", "solarized-base3")
 		reportText = reportText.replace("#FONT", "solarized-base03")
 		reportText = reportText.replace("#ACCENT", "solarized-orange")
@@ -245,7 +245,7 @@ def report(user, sdOpts: dict, ddOpts: list, reportsPath: str, reportTemplatePat
 	reportPdf.write(pdf)
 	reportPdf.close()
 
-	try:
+	try: # Debugging purposes.
 		if "keep" not in ddOpts:
 			os.remove(reportTexPath)
 
