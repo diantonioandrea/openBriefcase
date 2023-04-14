@@ -1,3 +1,5 @@
+# openBriefcase
+
 import openBriefcase, report
 import os, sys, random, shutil, requests, platform, zipfile, CLIbrary
 from colorama import Fore, Back, Style
