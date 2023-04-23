@@ -1,6 +1,7 @@
 # openBriefcase
 
-Accounting utility written in Python and built with [CLIbrary](https://github.com/diantonioandrea/CLIbrary).
+Accounting utility written in Python and built with [CLIbrary](https://github.com/diantonioandrea/CLIbrary).  
+Make sure to take a look at the [contributing guidelines](https://github.com/diantonioandrea/openBriefcase/blob/main/.github/CONTRIBUTING.md).
 
 ## Installation
 
