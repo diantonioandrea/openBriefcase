@@ -1,5 +1,7 @@
 # Security Policy
 
+[![CodeQL](https://github.com/diantonioandrea/openBriefcase/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/diantonioandrea/openBriefcase/actions/workflows/github-code-scanning/codeql)
+
 ## Supported Versions
 
 Keeping **openBriefcase** up to date is the best way to protect yourself against security vulnerabilities, so please make sure you're using the latest version.  
