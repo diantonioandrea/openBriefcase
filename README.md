@@ -1,6 +1,9 @@
 # openBriefcase
 
 Accounting utility written in Python and built with [CLIbrary](https://github.com/diantonioandrea/CLIbrary).  
+
+**openBriefcase** is an accounting utility written in Python and built with CLIbrary, designed to help people easily manage their finances. It features an intuitive command line interface and powerful features, allowing users to *create and manage multiple accounts*, *track expenses and income*, *generate reports* and more. With openBriefcase, you can quickly and easily manage your finances and get a better understanding of your financial situation.  
+
 Make sure to take a look at the [contributing guidelines](https://github.com/diantonioandrea/openBriefcase/blob/main/.github/CONTRIBUTING.md).
 
 ## Installation
