@@ -258,6 +258,7 @@ print("Type \'help\' if needed\n")
 
 # INTERFACE
 
+cmdHandler = dict()
 accounts = user.accounts
 current = None
 
@@ -276,7 +277,7 @@ while True:
 		cmdString += "/" + current.name
 	cmdString += "]"
 
-	cmdHandler = {"request": cmdString}
+	cmdHandler["request"] = cmdString
 
 	# The help that gets printed and the commands depend on the environment.
 	if current == None:
@@ -310,11 +311,11 @@ while True:
 		if len(current.movements):
 			cmdHandler["allowedCommands"] += ["dump", "edit", "remove"]
 
-	command = CLIbrary.cmdIn(cmdHandler)
+	cmdHandler = CLIbrary.cmdIn(cmdHandler)
 
-	cmd = command["command"]
-	sdOpts = command["sdOpts"]
-	ddOpts = command["ddOpts"]
+	cmd = cmdHandler["command"]
+	sdOpts = cmdHandler["sdOpts"]
+	ddOpts = cmdHandler["ddOpts"]
 
 	# COMMANDS
 
