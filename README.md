@@ -1,3 +1,7 @@
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/diantonioandrea/openBriefcase)
+![GitHub last commit](https://img.shields.io/github/last-commit/diantonioandrea/openBriefcase)
+![GitHub Release Date](https://img.shields.io/github/release-date/diantonioandrea/openBriefcase)
+
 # openBriefcase
 
 Accounting utility written in Python and built with [CLIbrary](https://github.com/diantonioandrea/CLIbrary).  
