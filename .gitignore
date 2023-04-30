@@ -15,7 +15,8 @@ openBriefcase.exe
 
 # OTHERS
 
-.vscode
+**/.venv
+**/.vscode
 
 **/__pycache__
 **/.DS_Store
