@@ -1,10 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: openBriefcase's new feature
+title: New feature
 labels: enhancement
 assignees: diantonioandrea
-
 ---
 
 **Is your feature request related to a problem? Please describe.**
