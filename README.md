@@ -1,4 +1,6 @@
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/diantonioandrea/openBriefcase)
+![GitHub](https://img.shields.io/github/license/diantonioandrea/openBriefcase)
+
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/diantonioandrea/openBriefcase?label=openBriefcase%20on%20GitHub)
 ![GitHub last commit](https://img.shields.io/github/last-commit/diantonioandrea/openBriefcase)
 ![GitHub Release Date](https://img.shields.io/github/release-date/diantonioandrea/openBriefcase)
 
