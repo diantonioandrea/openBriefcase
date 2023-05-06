@@ -10,13 +10,6 @@ linux: # Linux release
 	mkdir -p release
 	zip -r "release/openBriefcase-linux.zip" openBriefcase resources/
 
-windows: # Windows release
-	pyinstaller --onefile --console .\src\main.py
-	move .\dist\main.exe .\openBriefcase.exe
-	if exist .\release rd /s /q .\release
-	mkdir release
-	zip -r "release/openBriefcase-windows.zip" .\openBriefcase.exe .\resources\
-
-clean: # Linux and macOS only
+clean:
 	rm -rf dist build reports release data src/__pycache__ .vscode
 	rm -rf *.spec openBriefcase
