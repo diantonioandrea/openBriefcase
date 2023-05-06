@@ -22,7 +22,7 @@ def executable(filePath):
 # ---
 
 name = "openBriefcase"
-version = "v1.6.0_dev"
+version = "v1.6.0"
 production = True
 if name not in "".join(sys.argv): # Local testing.
 	production = False
