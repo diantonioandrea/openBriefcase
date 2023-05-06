@@ -41,33 +41,20 @@ Reports also need a full copy of TeX Live.
 
 where PLATFORM must be replaced by:
 
-* windows
 * linux
 * darwin (macOS)
 
 based on the platform on which **openBriefcase** will be compiled. This will also produce a release package under ./release/openBriefcase-PLATFORM.zip.  
-Note that the Makefile for the Windows version is written for [NMAKE](https://learn.microsoft.com/en-gb/cpp/build/reference/nmake-reference?view=msvc-170).  
+
 **openBriefcase** can be then installed by:
 
 	./openBriefcase install
-
-or
-
-	.\openBriefcase.exe install
-
-on Windows.
 	
 ### Installing from release
 
 After decompressing *openBriefcase-PLATFORM.zip*, it can be installed by:
 
 	./openBriefcase install
-
-or
-
-	.\openBriefcase.exe install
-
-on Windows.
 
 ## Commands
 

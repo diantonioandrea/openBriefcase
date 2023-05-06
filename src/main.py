@@ -46,9 +46,6 @@ if production: # Production.
 	elif system == "Linux":
 		installPath += ".local/bin/" + name + "/"
 
-	elif system == "Windows":
-		installPath += "AppData/Roaming/" + name + "/"
-
 	reportsPath = homePath + "Documents/Accounting/Reports/"
 
 else: # Testing.
@@ -75,11 +72,7 @@ if "install" in sys.argv and production:
 		for file in os.listdir(currentPath + "resources/"):
 			shutil.copy(currentPath + "resources/" + file, resourcesPath + file)
 
-		if system != "Windows":
-			shutil.copy(currentPath + name, installPath + name)
-
-		else:
-			shutil.copy(currentPath + name + ".exe", installPath + name + ".exe")
+		shutil.copy(currentPath + name, installPath + name)
 
 		CLIbrary.output({"type": "verbose", "string": name.upper() + " INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
 
@@ -126,13 +119,8 @@ if production:
 				for file in os.listdir(tempPath + "resources/"):
 					shutil.copy(tempPath + "resources/" + file, resourcesPath + file)
 
-				if system != "Windows":
-					shutil.copy(tempPath + name, installPath + name)
-					executable(installPath + name)
-
-				else:
-					shutil.copy(tempPath + name + ".exe", installPath + name + ".exe")
-					executable(installPath + name + ".exe")
+				shutil.copy(tempPath + name, installPath + name)
+				executable(installPath + name)
 
 				updateFlag = True
 				shutil.rmtree(tempPath)
@@ -301,8 +289,7 @@ while True:
 		if len(accounts):
 			cmdHandler["allowedCommands"] += ["select", "summary", "edit", "remove"]
 
-			# Reports not working on Windows.
-			if max([len(account.movements) for account in accounts]) and system != "Windows":
+			if max([len(account.movements) for account in accounts]):
 				cmdHandler["allowedCommands"].append("report")
 
 	else:
